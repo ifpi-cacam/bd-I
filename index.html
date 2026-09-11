@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Banco de Dados - Index of /aulas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      font-family: monospace;
+      background: #fff;
+      color: #000;
+      margin: 40px;
+    }
+
+    h1 {
+      font-size: 20px;
+      font-weight: normal;
+    }
+
+    a {
+      text-decoration: none;
+      color: #00f;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    hr {
+      margin: 15px 0;
+    }
+
+    /* Aula */
+    .aula {
+      margin-top: 10px;
+    }
+
+    .aula-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding: 5px 0;
+    }
+
+    .aula-header:hover {
+      background: #f5f5f5;
+    }
+
+    .titulo::before {
+      content: "📁 ";
+    }
+
+    .data {
+      font-size: 12px;
+      color: #555;
+      margin-left: 10px;
+    }
+
+    .btn-toggle {
+      font-family: monospace;
+      font-size: 12px;
+      border: 1px solid #000;
+      background: none;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+
+    /* Slide-down VISÍVEL */
+    .arquivos {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease-in-out;
+      margin-left: 20px;
+      border-left: 1px dashed #ccc;
+      padding-left: 10px;
+    }
+
+    .arquivos.ativo {
+      margin-top: 8px;
+    }
+
+    /* Cabeçalho estilo Apache */
+    .file-header {
+      margin-top: 10px;
+      font-size: 12px;
+      display: grid;
+      grid-template-columns: 1fr 150px 80px;
+      font-weight: bold;
+    }
+
+    .file-item {
+      display: grid;
+      grid-template-columns: 1fr 150px 80px;
+      font-size: 12px;
+      margin: 3px 0;
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    /* Responsivo */
+    @media (max-width: 600px) {
+      .file-header,
+      .file-item {
+        grid-template-columns: 1fr;
+      }
+
+      .aula-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .btn-toggle {
+        margin-top: 5px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Banco de Dados - Index of /aulas</h1>
+  <hr>
+
+<!-- 🔹 AULA 1 -->
+<div class="aula">
+  <div class="aula-header" onclick="toggleAula(this)">
+    <div>
+      <span class="titulo">Aula 01 - Apresentação da Disciplina e Motivação</span>
+      <span class="data">02/09/2026</span>
+    </div>
+    <button class="btn-toggle">[ arquivos ]</button>
+  </div>
+
+  <div class="arquivos">
+    <div class="file-header">
+      <span>Name</span>
+      <span>Last modified</span>
+      <span>Size</span>
+    </div>
+
+    <div class="file-item">
+      <span>
+        📄
+        <a href="aula01/aula_01_apresentacao_disciplina_banco_de_dados.pdf" target="_blank">
+          aula_01_apresentacao_disciplina_banco_de_dados.pdf
+        </a>
+      </span>
+      <span>02-Sep-2026</span>
+      <span>10.2M</span>
+    </div>
+
+   <div class="file-item">
+     <span>
+       📚
+       <a href="https://archive.org/details/navathe-sistemas-de-banco-de-dados-6a/page/32/mode/2up" target="_blank">
+         pdfcoffee.com_sistemas-de-banco-de-dados-6-ediao-ramez-elmasri-shamkant-b-navathe-pdf-free.pdf
+       </a>
+     </span>
+     <span>02-Sep-2026</span>
+     <span>144.3M</span>
+   </div>
+
+   <div class="file-item">
+     <span>
+       📚
+       <a href="https://www.academia.edu/4030494/Carlos_Alberto_Heuser_Projeto_de_Banco_de_Dados" target="_blank">
+         Carlos_Alberto_Heuser_Projeto_de_Banco_de_Dados.pdf
+       </a>
+     </span>
+     <span>02-Sep-2026</span>
+     <span>24.3M</span>
+   </div>
+
+  </div>
+</div>
+
+  <hr>
+
+  <!-- 🔻 FOOTER -->
+  <div class="footer" id="server-info"></div>
+
+  <script>
+    function toggleAula(element) {
+      const arquivos = element.nextElementSibling;
+
+      if (arquivos.style.maxHeight) {
+        arquivos.style.maxHeight = null;
+        arquivos.classList.remove("ativo");
+      } else {
+        arquivos.style.maxHeight = arquivos.scrollHeight + "px";
+        arquivos.classList.add("ativo");
+      }
+    }
+
+    function getServerInfo() {
+      const host = window.location.hostname;
+      const path = window.location.pathname;
+      const lastModified = document.lastModified;
+
+      return `
+        Apache/2.4.41 (Unix) Server at ${host} Port 80<br>
+        Directory: ${path}<br>
+        Last modified: ${lastModified}
+      `;
+    }
+
+    document.getElementById("server-info").innerHTML = getServerInfo();
+  </script>
+
+</body>
+</html>
