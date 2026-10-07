@@ -65,6 +65,9 @@ td{background:#fff;color:#34474d}
 .activity-link::before{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:8px;font-size:13px;font-weight:900}
 .activity-link.pdf::before{content:"PDF";background:var(--redbg);color:var(--red)}
 .activity-link.web::before{content:"WEB";background:var(--bluebg);color:var(--blue)}
+.imggrid{display:grid;grid-template-columns:1.05fr .95fr;gap:18px;align-items:start;margin-top:20px}
+.srcimg{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;box-shadow:0 7px 22px #17333a0d}
+@media(max-width:900px){.imggrid{grid-template-columns:1fr}}
 .diagram{background:#fbfcfc;border:1px solid var(--line);border-radius:8px;padding:18px;margin-top:20px}
 .diagram svg{width:100%;max-height:46vh}
 .e{fill:#fff;stroke:#173f44;stroke-width:2}
@@ -303,6 +306,45 @@ ITEM_PEDIDO = (id_pedido PK/FK -> PEDIDO(id_pedido), id_produto PK/FK -> PRODUTO
   <div class="mono">TABELA_1 = (campo_pk PK, campo_2, campo_3)
 TABELA_2 = (campo_pk PK, campo_fk FK -> TABELA_1(campo_pk), campo_4)
 TABELA_ASSOCIATIVA = (campo_a PK/FK -> TABELA_A(campo_a), campo_b PK/FK -> TABELA_B(campo_b), atributo_do_relacionamento)</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Exercício adicional</div><h2>Prática 1: DER e modelo relacional</h2></div><div class="n">13</div></div>
+  <p class="lead">Analise o enunciado da imagem e entregue duas representações: o DER e o modelo relacional no padrão da aula.</p>
+  <div class="imggrid">
+    <img class="srcimg" src="slide-43.png" alt="Exercício adicional para construção de DER e modelo relacional">
+    <div class="c">
+      <h3>O que fazer</h3>
+      <ul>
+        <li>Identifique entidades, atributos, chaves e relacionamentos.</li>
+        <li>Desenhe o DER com as cardinalidades.</li>
+        <li>Converta o DER para tabelas usando as regras da aula anterior.</li>
+        <li>Escreva cada tabela como <b>NomeTabela = (campos, ...)</b>.</li>
+      </ul>
+      <div class="call"><b>Entrega:</b> DER + modelo relacional textual + diagrama de tabelas no drawDB.</div>
+    </div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Exercício adicional</div><h2>Prática 2: validando chaves e FKs</h2></div><div class="n">14</div></div>
+  <p class="lead">Repita o processo para o segundo exercício, prestando atenção às cardinalidades e às tabelas associativas.</p>
+  <div class="imggrid">
+    <img class="srcimg" src="slide-44.png" alt="Segundo exercício adicional para construção de DER e modelo relacional">
+    <div class="c">
+      <h3>Checklist</h3>
+      <ul>
+        <li>Todo relacionamento N:M gerou tabela própria?</li>
+        <li>Toda FK aponta para uma PK existente?</li>
+        <li>Chaves compostas foram marcadas corretamente?</li>
+        <li>Atributos de relacionamento ficaram na tabela correta?</li>
+      </ul>
+      <div class="mono">EXEMPLO = (id_exemplo PK, campo_1, campo_2)
+ASSOCIACAO = (id_a PK/FK -> A(id_a), id_b PK/FK -> B(id_b), atributo)</div>
+    </div>
+  </div>
   <div class="bar"></div>
 </section>
 
