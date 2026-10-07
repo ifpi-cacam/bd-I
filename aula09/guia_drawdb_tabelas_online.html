@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BD I - Guia rápido drawDB</title>
+<style>
+:root{
+  --bg:#f5f7f8;--panel:#fff;--ink:#17272b;--mut:#617177;--line:#dfe6e7;
+  --t:#0f766e;--t2:#115e59;--soft:#e9f5f3;--soft2:#f3f8f7;
+  --gold:#a16207;--goldbg:#fff7e7;--red:#a43f3f;--redbg:#fff1f1;
+  --blue:#25637a;--bluebg:#eef7fa;--violet:#6d5a8c;--violetbg:#f4f1f8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:Inter,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+body{overflow:hidden}
+a{color:var(--t2);font-weight:900;text-decoration-thickness:2px;text-underline-offset:4px}
+.s{position:absolute;inset:0;display:none;overflow:auto;padding:5vh 7vw 76px;background:radial-gradient(circle at 94% 5%,#e8f5f2,transparent 25%),linear-gradient(#fff,#f8faf9)}
+.s.on{display:flex;flex-direction:column}
+.hero{justify-content:center}
+h1,h2{font-family:Georgia,serif;line-height:1.05;margin:.15em 0}
+h1{font-size:clamp(44px,6vw,82px);max-width:1120px}
+h2{font-size:clamp(32px,4vw,56px)}
+h3{margin:.2em 0 .55em;font-size:clamp(18px,1.7vw,25px)}
+p{font-size:clamp(16px,1.4vw,20px);line-height:1.55;color:#34474d}
+ul{margin:.4em 0 0;padding-left:1.15em}
+li{margin:.38em 0;color:#34474d}
+.lead{font-size:clamp(20px,2vw,28px);max-width:1100px}
+.k{font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--t);font-weight:800}
+.top{display:flex;justify-content:space-between;gap:20px}
+.n{font-size:13px;font-weight:800;color:#9aa6aa}
+.g2,.g3,.g4{display:grid;gap:18px;margin-top:22px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.c,.mini{background:#fff;border:1px solid var(--line);border-radius:8px;padding:19px;box-shadow:0 7px 22px #17333a0d}
+.c p,.c li,.mini p{font-size:16px}
+.tag{display:inline-block;padding:5px 9px;border-radius:99px;background:var(--soft);color:#115e59;font-size:11px;font-weight:800;text-transform:uppercase}
+.tag.gold{background:var(--goldbg);color:var(--gold)}
+.tag.red{background:var(--redbg);color:var(--red)}
+.tag.blue{background:var(--bluebg);color:var(--blue)}
+.tag.violet{background:var(--violetbg);color:var(--violet)}
+.call{margin-top:20px;border-left:5px solid var(--t);background:var(--soft);padding:16px 20px;border-radius:0 8px 8px 0}
+.warn{border-left-color:var(--gold);background:var(--goldbg)}
+.danger{border-left-color:var(--red);background:var(--redbg)}
+.steps{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:24px 0}
+.steps span{background:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:8px;font-weight:700}
+.mono{white-space:pre-wrap;background:#172a2e;color:#f2f6f5;padding:17px;border-radius:8px;font-family:Consolas,monospace;line-height:1.65;font-size:clamp(14px,1.25vw,17px)}
+.note{margin-top:auto;padding-top:14px;font-size:13px;color:#78878c}
+.tool-link{display:inline-flex;align-items:center;gap:10px;background:#fff;border:2px solid #bddfd9;border-radius:8px;padding:16px 18px;margin-top:18px;margin-right:10px;box-shadow:0 7px 22px #17333a0d;font-size:clamp(17px,1.45vw,22px)}
+.tool-link::before{content:"WEB";display:inline-grid;place-items:center;width:46px;height:46px;border-radius:8px;background:var(--bluebg);color:var(--blue);font-size:13px;font-weight:900}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff;margin-top:20px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px}
+th,td{border:1px solid #dfe6e7;padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#eef6f4;color:#18383c;font-weight:900}
+td{background:#fff;color:#34474d}
+.pk{background:#fff7e7!important;color:#7a4a05;font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.fk{background:#eef7fa!important;color:#20596d;font-weight:900}
+.both{background:linear-gradient(90deg,#fff7e7 0 50%,#eef7fa 50% 100%)!important;color:#18383c;font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.pill{border:1px solid var(--line);border-radius:99px;padding:6px 10px;background:#fff;font-size:13px;color:#41545a}
+.pill.pk{background:#fff7e7!important}
+.pill.fk{background:#eef7fa!important;text-decoration:none}
+.tight{padding:3vh 7vw 60px}
+.tight h2{font-size:clamp(28px,3.5vw,48px)}
+.tight .lead{font-size:clamp(17px,1.45vw,22px);line-height:1.35}
+.tight .g2,.tight .g3,.tight .g4{gap:12px;margin-top:14px}
+.tight .c{padding:14px}
+.tight h3{font-size:19px}
+.controls{position:fixed;z-index:5;right:20px;bottom:16px;background:#ffffffed;border:1px solid var(--line);border-radius:99px;padding:7px;box-shadow:0 10px 30px #17333a20}
+.controls button{border:0;background:#edf3f2;width:36px;height:36px;border-radius:50%;font-size:17px;cursor:pointer}
+.controls button:hover{background:#dcebe8}
+.controls span{display:inline-block;width:62px;text-align:center;font-size:12px;font-weight:800;color:#65757a}
+.bar{position:absolute;bottom:0;left:0;height:5px;background:var(--t)}
+@media(max-width:900px){
+  body{overflow:auto}
+  .s{position:relative;min-height:100vh}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  h1{font-size:42px}
+}
+@media print{
+  body{overflow:visible}
+  .controls{display:none}
+  .s{display:flex!important;position:relative;min-height:100vh;page-break-after:always}
+  .bar{display:none}
+}
+</style>
+</head>
+<body>
+
+<section class="s hero on">
+  <div class="k">Banco de Dados I · ADS</div>
+  <h1>Guia rápido: drawDB</h1>
+  <p class="lead">Use o drawDB para desenhar online o esquema de tabelas do modelo relacional: tabelas, campos, chaves primárias, chaves estrangeiras e relacionamentos.</p>
+  <div class="steps"><span>Abrir editor</span><span>Escolher banco</span><span>Criar tabelas</span><span>Ligar FKs</span><span>Exportar</span></div>
+  <p class="note">Ferramenta: https://www.drawdb.app</p>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Acesso</div><h2>Abra o editor no navegador</h2></div><div class="n">00</div></div>
+  <p class="lead">O drawDB funciona no navegador. Para a atividade, use o editor online e comece um diagrama novo.</p>
+  <a class="tool-link" href="https://www.drawdb.app/editor" target="_blank" rel="noopener">Abrir editor do drawDB</a>
+  <div class="g3">
+    <div class="c"><span class="tag">1</span><h3>Editor</h3><p>Acesse o link e aguarde a área de desenho carregar.</p></div>
+    <div class="c"><span class="tag">2</span><h3>Novo diagrama</h3><p>Se já houver um diagrama aberto, use <b>File → New</b> para iniciar outro.</p></div>
+    <div class="c"><span class="tag">3</span><h3>Sem conta</h3><p>Para uso básico, o editor pode ser usado diretamente no navegador.</p></div>
+  </div>
+  <div class="call warn"><b>Importante:</b> exporte o diagrama ao final. No editor livre, o trabalho pode ficar salvo apenas no navegador usado.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Banco alvo</div><h2>Escolha o tipo de banco</h2></div><div class="n">01</div></div>
+  <p class="lead">Ao criar o diagrama, o drawDB pode pedir o dialeto do banco de dados.</p>
+  <div class="g3">
+    <div class="c"><span class="tag blue">Generic</span><h3>Recomendado para a aula</h3><p>Use quando o objetivo for apenas representar tabelas, campos e relacionamentos sem depender de um SGBD específico.</p></div>
+    <div class="c"><span class="tag">MySQL/PostgreSQL/etc.</span><h3>Quando houver SGBD definido</h3><p>Use se o professor pedir um banco específico ou se a atividade exigir tipos próprios.</p></div>
+    <div class="c"><span class="tag gold">Tipos</span><h3>Não complique no início</h3><p>Para a primeira versão, priorize nomes de campos, PKs e FKs. Depois ajuste os tipos.</p></div>
+  </div>
+  <div class="call"><b>Na dúvida:</b> escolha <b>Generic</b> para focar na modelagem relacional.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Tabelas</div><h2>Crie uma tabela por relação</h2></div><div class="n">02</div></div>
+  <p class="lead">Cada relação escrita no modelo relacional deve aparecer como uma tabela no drawDB.</p>
+  <div class="mono">ALUNO = (matricula PK, nome, email, id_curso FK -> CURSO(id_curso))
+CURSO = (id_curso PK, nome, carga_horaria)</div>
+  <div class="g2">
+    <div class="c"><h3>No drawDB</h3><ul><li>Adicione uma tabela chamada ALUNO.</li><li>Inclua os campos matricula, nome, email e id_curso.</li><li>Marque matricula como chave primária.</li></ul></div>
+    <div class="c"><h3>Depois</h3><ul><li>Adicione a tabela CURSO.</li><li>Inclua id_curso, nome e carga_horaria.</li><li>Marque id_curso como chave primária.</li></ul></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Campos</div><h2>Configure cada campo</h2></div><div class="n">03</div></div>
+  <div class="g3">
+    <div class="c"><span class="tag">Nome</span><h3>Use nomes claros</h3><p>Prefira nomes como id_cliente, data_pedido, valor_total e cpf. Evite campo1 ou dado.</p></div>
+    <div class="c"><span class="tag">Tipo</span><h3>Escolha tipos compatíveis</h3><p>Use inteiro para identificadores numéricos, texto para nomes, data para datas e decimal para valores monetários.</p></div>
+    <div class="c"><span class="tag gold">PK</span><h3>Marque a chave primária</h3><p>Quando a chave for composta, marque todos os campos que fazem parte da chave.</p></div>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Campo</th><th>Tipo sugerido</th><th>Marcação</th></tr></thead>
+      <tbody>
+        <tr><td class="pk">id_cliente</td><td>integer</td><td>PK</td></tr>
+        <tr><td>nome</td><td>varchar/text</td><td>campo comum</td></tr>
+        <tr><td>data_nascimento</td><td>date</td><td>campo comum</td></tr>
+        <tr><td class="fk">id_curso</td><td>integer</td><td>FK para CURSO</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Relacionamentos</div><h2>Ligue as chaves estrangeiras</h2></div><div class="n">04</div></div>
+  <p class="lead">No modelo relacional, relacionamento aparece por meio de chave estrangeira ou tabela associativa.</p>
+  <div class="g2">
+    <div class="c"><span class="tag blue">1:N</span><h3>FK no lado N</h3><p>Arraste a conexão do campo FK para a PK da tabela referenciada.</p></div>
+    <div class="c"><span class="tag blue">N:M</span><h3>Tabela intermediária</h3><p>Crie uma tabela associativa com as FKs das tabelas participantes. Essas FKs normalmente formam a PK composta.</p></div>
+  </div>
+  <div class="mono">MATRICULA = (id_aluno PK/FK -> ALUNO(id_aluno), id_disciplina PK/FK -> DISCIPLINA(id_disciplina), data_matricula)</div>
+  <div class="call"><b>No drawDB:</b> a tabela MATRICULA deve ficar entre ALUNO e DISCIPLINA, com conexões para as duas tabelas.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Conferência</div><h2>Compare drawDB e lista textual</h2></div><div class="n">05</div></div>
+  <p class="lead">O diagrama no drawDB e o texto do modelo relacional precisam representar a mesma estrutura.</p>
+  <div class="g3">
+    <div class="c"><h3>Mesmo nome</h3><p>Toda tabela desenhada deve aparecer no texto como <b>NomeTabela = (...)</b>.</p></div>
+    <div class="c"><h3>Mesmos campos</h3><p>Campos do drawDB e campos da lista textual devem coincidir.</p></div>
+    <div class="c"><h3>Mesmas chaves</h3><p>PKs e FKs do drawDB devem estar marcadas também no texto.</p></div>
+  </div>
+  <div class="call danger"><b>Erro comum:</b> desenhar uma FK no drawDB e esquecer de escrever <b>FK -> Tabela(campo)</b> na lista textual.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Exportação</div><h2>Salve o resultado</h2></div><div class="n">06</div></div>
+  <div class="g3">
+    <div class="c"><span class="tag">Imagem</span><h3>Para anexar na atividade</h3><p>Exporte o diagrama como imagem quando quiser entregar a visualização das tabelas.</p></div>
+    <div class="c"><span class="tag">SQL/DDL</span><h3>Para conferir estrutura</h3><p>O drawDB pode gerar script SQL/DDL a partir do diagrama. Use como apoio, não como substituto da explicação.</p></div>
+    <div class="c"><span class="tag">JSON</span><h3>Para continuar depois</h3><p>Salve uma cópia editável do diagrama quando precisar reabrir e alterar o trabalho.</p></div>
+  </div>
+  <div class="call warn"><b>Não entregue apenas o arquivo da ferramenta.</b> Entregue também o modelo relacional textual no padrão pedido pelo professor.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Resumo</div><h2>Fluxo recomendado para a atividade</h2></div><div class="n">07</div></div>
+  <div class="steps"><span>1. Ler enunciado</span><span>2. Fazer DER</span><span>3. Mapear relações</span><span>4. Montar no drawDB</span><span>5. Exportar</span><span>6. Entregar texto</span></div>
+  <div class="g2">
+    <div class="c"><h3>O drawDB entra depois do raciocínio</h3><p>Primeiro identifique entidades, relacionamentos, cardinalidades e regras. Depois use a ferramenta para materializar as tabelas.</p></div>
+    <div class="c"><h3>A entrega deve ser verificável</h3><p>Quem ler sua resposta precisa conseguir rastrear cada FK até uma PK existente.</p></div>
+  </div>
+  <div class="mono">CLIENTE = (id_cliente PK, nome, cpf)
+PEDIDO = (id_pedido PK, data_pedido, id_cliente FK -> CLIENTE(id_cliente))</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s hero">
+  <div class="k">Fechamento</div>
+  <h1>Desenhe as tabelas, mas explique o modelo.</h1>
+  <p class="lead">O drawDB ajuda na representação visual. A nota vem da coerência entre o enunciado, o DER, as regras de mapeamento e o modelo relacional entregue.</p>
+  <div class="steps"><span>PK clara</span><span>FK rastreável</span><span>N:M com tabela</span><span>Exportação salva</span></div>
+  <p class="note">Fontes: documentação oficial do drawDB e página oficial da ferramenta.</p>
+  <div class="bar"></div>
+</section>
+
+<div class="controls"><button id="p" title="Anterior">←</button><span id="ct"></span><button id="n" title="Próximo">→</button><button id="f" title="Tela cheia">⛶</button></div>
+<script>
+const S=[...document.querySelectorAll('.s')];let i=0;
+function sh(x){
+  i=Math.max(0,Math.min(S.length-1,x));
+  S.forEach((s,k)=>s.classList.toggle('on',k===i));
+  document.querySelector('#ct').textContent=`${i+1} / ${S.length}`;
+  document.querySelectorAll('.bar').forEach(b=>b.style.width=((i+1)/S.length*100)+'%');
+}
+document.getElementById('p').addEventListener('click',()=>sh(i-1));
+document.getElementById('n').addEventListener('click',()=>sh(i+1));
+document.getElementById('f').addEventListener('click',()=>document.documentElement.requestFullscreen?.());
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();sh(i+1)}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();sh(i-1)}
+  if(e.key==='Home')sh(0);
+  if(e.key==='End')sh(S.length-1);
+  if(e.key.toLowerCase()==='f')document.documentElement.requestFullscreen?.();
+});
+sh(0);
+</script>
+</body>
+</html>

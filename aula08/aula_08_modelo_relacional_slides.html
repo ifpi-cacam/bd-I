@@ -1,0 +1,758 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BD I - Modelo Relacional</title>
+<style>
+:root{
+  --bg:#f5f7f8;--panel:#fff;--ink:#17272b;--mut:#617177;--line:#dfe6e7;
+  --t:#0f766e;--t2:#115e59;--soft:#e9f5f3;--soft2:#f3f8f7;
+  --gold:#a16207;--goldbg:#fff7e7;--red:#a43f3f;--redbg:#fff1f1;
+  --blue:#25637a;--bluebg:#eef7fa;--violet:#6d5a8c;--violetbg:#f4f1f8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:Inter,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+body{overflow:hidden}
+.s{position:absolute;inset:0;display:none;overflow:auto;padding:5vh 7vw 76px;background:radial-gradient(circle at 94% 5%,#e8f5f2,transparent 25%),linear-gradient(#fff,#f8faf9)}
+.s.on{display:flex;flex-direction:column}
+.hero{justify-content:center}
+h1,h2{font-family:Georgia,serif;line-height:1.05;margin:.15em 0}
+h1{font-size:clamp(44px,6vw,82px);max-width:1100px}
+h2{font-size:clamp(32px,4vw,56px)}
+h3{margin:.2em 0 .55em;font-size:clamp(18px,1.7vw,25px)}
+p{font-size:clamp(16px,1.4vw,20px);line-height:1.55;color:#34474d}
+ul{margin:.4em 0 0;padding-left:1.15em}
+li{margin:.38em 0;color:#34474d}
+.lead{font-size:clamp(20px,2vw,28px);max-width:1100px}
+.k{font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--t);font-weight:800}
+.top{display:flex;justify-content:space-between;gap:20px}
+.n{font-size:13px;font-weight:800;color:#9aa6aa}
+.g2,.g3,.g4{display:grid;gap:18px;margin-top:22px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.c,.mini{background:#fff;border:1px solid var(--line);border-radius:8px;padding:19px;box-shadow:0 7px 22px #17333a0d}
+.c p,.c li,.mini p{font-size:16px}
+.mini{padding:14px}
+.tag{display:inline-block;padding:5px 9px;border-radius:99px;background:var(--soft);color:#115e59;font-size:11px;font-weight:800;text-transform:uppercase}
+.tag.gold{background:var(--goldbg);color:var(--gold)}.tag.red{background:var(--redbg);color:var(--red)}.tag.blue{background:var(--bluebg);color:var(--blue)}.tag.violet{background:var(--violetbg);color:var(--violet)}
+.call{margin-top:20px;border-left:5px solid var(--t);background:var(--soft);padding:16px 20px;border-radius:0 8px 8px 0}
+.warn{border-left-color:var(--gold);background:var(--goldbg)}
+.steps{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:24px 0}
+.steps span{background:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:8px;font-weight:700}
+.d{background:#fbfcfc;border:1px solid var(--line);border-radius:8px;padding:18px;margin-top:20px}
+.d svg{width:100%;max-height:50vh}
+.e{fill:#fff;stroke:#173f44;stroke-width:2}.weak{fill:#fff;stroke:#a43f3f;stroke-width:3}.r{fill:#e8f4f2;stroke:#0f766e;stroke-width:2}.a{fill:#fff;stroke:#718187;stroke-width:1.7}.ak{fill:#fff7e7;stroke:var(--gold);stroke-width:2}
+svg text{font-family:Inter,Arial;fill:#21363a}.lab{font-weight:800;font-size:17px}.sm{font-size:13px}.xs{font-size:11px}
+.mono{white-space:pre-wrap;background:#172a2e;color:#f2f6f5;padding:17px;border-radius:8px;font-family:Consolas,monospace;line-height:1.65}
+.q{font-family:Georgia,serif;font-size:clamp(25px,3vw,40px);font-weight:700}
+.note{margin-top:auto;padding-top:14px;font-size:13px;color:#78878c}
+.relset{display:grid;gap:15px;margin-top:22px}.rel{display:grid;grid-template-columns:170px 1fr;gap:14px;align-items:start}.relname{font-weight:900;color:#21363a;padding-top:10px}.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+table{border-collapse:collapse;width:100%;min-width:540px;font-size:15px}
+th,td{border:1px solid #dfe6e7;padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#eef6f4;color:#18383c;font-weight:900}
+td{background:#fff}
+.pk{background:#fff7e7!important;color:#7a4a05;font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.fk{background:#eef7fa!important;color:#20596d;font-weight:900}
+.both{background:linear-gradient(90deg,#fff7e7 0 50%,#eef7fa 50% 100%)!important;color:#18383c;font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.attr{background:#f7faf9!important;color:#395057}
+.sample td{font-size:14px}.ok{color:#0f766e;font-weight:900}.bad{color:#a43f3f;font-weight:900}
+.focus-row td{background:#f0faf7!important;border-top:2px solid #87cfc2;border-bottom:2px solid #87cfc2}
+.focus-row td:first-child{border-left:4px solid #0f766e}
+.orphan-row td{background:#fff4f4!important;border-top:2px solid #e6a6a6;border-bottom:2px solid #e6a6a6}
+.orphan-row td:first-child{border-left:4px solid #a43f3f}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.pill{border:1px solid var(--line);border-radius:99px;padding:6px 10px;background:#fff;font-size:13px;color:#41545a}.pill.pk{background:#fff7e7!important}.pill.fk{background:#eef7fa!important;text-decoration:none}.pill.both{text-decoration:none}
+.imggrid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;margin-top:20px}.srcimg{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff}
+.smalltext{font-size:14px;color:#617177}
+.s.tight{padding:3vh 7vw 60px}.tight h2{font-size:clamp(28px,3.5vw,48px)}.tight .lead{font-size:clamp(17px,1.45vw,22px);line-height:1.35}.tight .d{padding:9px;margin-top:10px}.tight .d svg{max-height:18vh}.tight .relset,.tight .g2{gap:10px;margin-top:12px}.tight th,.tight td{padding:7px 9px;font-size:13px}.tight .c{padding:14px}.tight h3{font-size:19px}.bank-pair{align-items:start}.bank-pair .relname{padding-top:0;margin-bottom:6px}
+.s.dense{padding:3vh 6vw 62px}.dense h2{font-size:clamp(28px,3.2vw,46px)}.dense .lead{font-size:clamp(16px,1.35vw,21px);line-height:1.32}.dense .relset,.dense .g2,.dense .g3{gap:10px;margin-top:12px}.dense th,.dense td{padding:6px 8px;font-size:12.5px}.dense .c{padding:13px}.dense .call{margin-top:12px;padding:12px 16px}.dense .d{padding:10px;margin-top:10px}.dense .d svg{max-height:18vh}.dense .relname{font-size:13px}
+.controls{position:fixed;z-index:5;right:20px;bottom:16px;background:#ffffffed;border:1px solid var(--line);border-radius:99px;padding:7px;box-shadow:0 10px 30px #17333a20}
+.controls button{border:0;background:#edf3f2;width:36px;height:36px;border-radius:50%;font-size:17px;cursor:pointer}.controls button:hover{background:#dcebe8}
+.controls span{display:inline-block;width:62px;text-align:center;font-size:12px;font-weight:800;color:#65757a}.bar{position:absolute;bottom:0;left:0;height:5px;background:var(--t)}
+@media(max-width:900px){body{overflow:auto}.s{position:relative;min-height:100vh}.g2,.g3,.g4,.imggrid{grid-template-columns:1fr}.rel{grid-template-columns:1fr}h1{font-size:42px}}
+@media print{body{overflow:visible}.controls{display:none}.s{display:flex!important;position:relative;min-height:100vh;page-break-after:always}.bar{display:none}}
+</style>
+</head>
+<body>
+
+<section class="s hero on">
+  <div class="k">Banco de Dados I · ADS</div>
+  <h1>Modelo Relacional</h1>
+  <p class="lead">Do Modelo Entidade-Relacionamento ao esquema lógico: relações, atributos, tuplas, domínios, chaves, integridade referencial e regras de mapeamento ER -> Relacional.</p>
+  <div class="steps"><span>Conceitos</span><span>Tabelas</span><span>Chaves</span><span>Mapeamento</span><span>Exercícios</span></div>
+  <p class="note">Base: Modelo-Relacional-Introducao-01-03-2024_Slide-18.pdf, slides 17 a 55.</p>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Roteiro</div><h2>Aula completa</h2></div><div class="n">00</div></div>
+  <div class="g3">
+    <div class="c"><span class="tag">1</span><h3>Modelo relacional</h3><p>Origem, ideia central, relação, tabela, tupla, atributo e domínio.</p></div>
+    <div class="c"><span class="tag">2</span><h3>Esquema relacional</h3><p>Estrutura de tabelas, tipos de dados, chaves primárias, candidatas, estrangeiras e compostas.</p></div>
+    <div class="c"><span class="tag">3</span><h3>Conversão ER -> Relacional</h3><p>Entidades, relacionamentos 1:1, 1:N, N:M, n-ários, atributos multivalorados, compostos e herança.</p></div>
+  </div>
+  <div class="call"><b>Objetivo da aula:</b> transformar modelos conceituais em esquemas relacionais coerentes, preservando identificação, cardinalidade e integridade referencial.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Contexto</div><h2>De Codd ao banco comercial</h2></div><div class="n">01</div></div>
+  <div class="g2">
+    <div class="c"><span class="tag">1970</span><h3>Edgar F. Codd</h3><p>O modelo relacional foi introduzido por Codd como uma forma matemática e rigorosa de representar dados.</p></div>
+    <div class="c"><span class="tag blue">Base formal</span><h3>Conjuntos e lógica</h3><p>O modelo usa ideias da teoria dos conjuntos e da lógica de primeira ordem para tratar dados como relações.</p></div>
+  </div>
+  <div class="g2">
+    <div class="c"><h3>Por que foi importante?</h3><ul><li>Separou a forma lógica de ver os dados da forma física de armazenamento.</li><li>Permitiu consultas declarativas, como SQL.</li><li>Tornou tabelas a representação dominante em SGBDs comerciais.</li></ul></div>
+    <div class="c"><h3>Aceitação comercial</h3><p>A adoção ampla ocorreu a partir de meados da década de 1980, quando os SGBDs relacionais se tornaram viáveis e populares.</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Ideia central</div><h2>Banco de dados como coleção de relações</h2></div><div class="n">02</div></div>
+  <p class="lead">Na teoria, o banco de dados relacional é uma coleção de <b>relações</b>. Na prática cotidiana, visualizamos essas relações como <b>tabelas</b>.</p>
+  <div class="steps"><span>Relação</span><span>Atributos</span><span>Tuplas</span><span>Domínios</span><span>Restrições</span></div>
+  <div class="call"><b>Atenção:</b> tabela é uma representação prática. O conceito formal é relação, isto é, um conjunto de tuplas com a mesma estrutura.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Vocabulário</div><h2>Formal x prático</h2></div><div class="n">03</div></div>
+  <div class="g3">
+    <div class="c"><span class="tag">Formal</span><h3>Relação</h3><p>Conjunto de tuplas com os mesmos atributos.</p><div class="call">Na prática: <b>tabela</b>.</div></div>
+    <div class="c"><span class="tag">Formal</span><h3>Atributo</h3><p>Nome de uma propriedade da relação.</p><div class="call">Na prática: <b>coluna</b> ou campo.</div></div>
+    <div class="c"><span class="tag">Formal</span><h3>Tupla</h3><p>Uma ocorrência da relação, formada por valores.</p><div class="call">Na prática: <b>linha</b>, registro ou instância.</div></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Exemplo base</div><h2>Uma relação ALUNO</h2></div><div class="n">04</div></div>
+  <div class="tablewrap">
+    <table class="sample">
+      <thead><tr><th class="pk">matricula</th><th>nome</th><th>email</th><th>idade</th><th>curso</th></tr></thead>
+      <tbody>
+        <tr><td class="pk">20261001</td><td>Ana Moura</td><td>ana@ifpi.edu.br</td><td>21</td><td>ADS</td></tr>
+        <tr><td class="pk">20261002</td><td>Bruno Lima</td><td>bruno@ifpi.edu.br</td><td>19</td><td>ADS</td></tr>
+        <tr><td class="pk">20261003</td><td>Carla Sousa</td><td>carla@ifpi.edu.br</td><td>23</td><td>ADS</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="legend"><span class="pill pk">atributo-chave / PK</span><span class="pill">atributos</span><span class="pill">tuplas = linhas</span></div>
+  <div class="g2">
+    <div class="c"><h3>Nome da relação</h3><p><b>ALUNO</b> identifica o conjunto de tuplas que possuem a mesma estrutura.</p></div>
+    <div class="c"><h3>Tupla</h3><p>Cada linha representa uma ocorrência de aluno no banco.</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Domínio</div><h2>Valores permitidos para cada atributo</h2></div><div class="n">05</div></div>
+  <p class="lead">Para cada atributo de uma relação existe um conjunto de valores permitidos, chamado <b>domínio</b>.</p>
+  <div class="g3">
+    <div class="c"><h3>idade_funcionario</h3><p>Inteiro, por exemplo: <b>15 <= idade <= 80</b>.</p></div>
+    <div class="c"><h3>titulacao_professor</h3><p>Valor controlado: <b>{graduado, mestre, doutor}</b>.</p></div>
+    <div class="c"><h3>nota_aluno</h3><p>Número decimal, por exemplo: <b>0 <= nota <= 10</b>.</p></div>
+  </div>
+  <div class="g2">
+    <div class="c"><h3>Tipo de dado</h3><p>Define a natureza do valor: inteiro, texto, data, decimal, booleano.</p></div>
+    <div class="c"><h3>Formato e restrição</h3><p>Um domínio também pode impor tamanho, faixa, máscara, lista de valores ou regra de validade.</p></div>
+  </div>
+  <div class="call warn"><b>Projeto ruim:</b> aceitar qualquer texto para nota, idade ou data. <b>Projeto melhor:</b> declarar domínio, tipo e restrições coerentes.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Esquema</div><h2>O que o esquema relacional descreve?</h2></div><div class="n">06</div></div>
+  <div class="g2">
+    <div class="c">
+      <h3>Esquema sem tipos explícitos</h3>
+      <div class="mono">disciplina(id, nome, carga_horaria, descricao)
+aluno(id, nome, idade, telefone)</div>
+    </div>
+    <div class="c">
+      <h3>Esquema com tipos</h3>
+      <div class="mono">aluno(
+  id: integer,
+  nome: string(60),
+  idade: integer,
+  telefone: string(20)
+)</div>
+    </div>
+  </div>
+  <div class="call"><b>Um esquema relacional especifica:</b> nome da relação, atributos, domínio/tipo de cada atributo, chaves e restrições relevantes.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Propriedades</div><h2>Relação é conjunto de tuplas únicas</h2></div><div class="n">07</div></div>
+  <div class="g3">
+    <div class="c"><span class="tag gold">Unicidade</span><h3>Não há duas linhas iguais</h3><p>Tuplas duplicadas não fazem sentido em uma relação formal. A chave ajuda a garantir isso.</p></div>
+    <div class="c"><span class="tag blue">Ordem</span><h3>A ordem das linhas não importa</h3><p>Reordenar a apresentação da tabela não muda a relação.</p></div>
+    <div class="c"><span class="tag violet">Nome</span><h3>Cada tabela tem nome único</h3><p>No mesmo esquema, nomes de relações precisam distinguir conjuntos diferentes.</p></div>
+  </div>
+  <div class="tablewrap" style="margin-top:22px">
+    <table class="sample"><thead><tr><th class="pk">id_cliente</th><th>nome</th><th>cpf</th><th>cidade</th></tr></thead><tbody>
+      <tr><td class="pk">1</td><td>Rita Sales</td><td>111.222.333-44</td><td>Teresina</td></tr>
+      <tr><td class="pk">2</td><td>Rita Sales</td><td>555.666.777-88</td><td>Parnaíba</td></tr>
+    </tbody></table>
+  </div>
+  <div class="call"><b>Mesmo nome não implica mesma pessoa.</b> A identificação depende da chave escolhida e das regras do domínio.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Chave</div><h2>Como identificar tuplas de forma única?</h2></div><div class="n">08</div></div>
+  <p class="lead">Uma chave de uma relação R é um conjunto mínimo de atributos que identifica unicamente cada tupla de R.</p>
+  <div class="g2">
+    <div class="c"><span class="tag gold">Superchave</span><h3>Identifica, mas pode sobrar atributo</h3><p>{cpf, nome} identifica cliente se CPF for único, mas nome é desnecessário.</p></div>
+    <div class="c"><span class="tag gold">Chave</span><h3>Identifica e é mínima</h3><p>{cpf} identifica cliente e não contém atributo excedente.</p></div>
+  </div>
+  <div class="call"><b>Minimalidade importa:</b> se retirar qualquer atributo da chave faz a identificação deixar de ser única, a chave é mínima.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">PK e candidatas</div><h2>Uma relação pode ter várias chaves possíveis</h2></div><div class="n">09</div></div>
+  <div class="tablewrap">
+    <table class="sample"><thead><tr><th class="pk">id_cliente</th><th class="attr">cpf</th><th class="attr">email</th><th>nome</th><th>telefone</th></tr></thead><tbody>
+      <tr><td class="pk">10</td><td>123.456.789-00</td><td>marina@email.com</td><td>Marina Costa</td><td>8699999-1000</td></tr>
+      <tr><td class="pk">11</td><td>321.654.987-00</td><td>renato@email.com</td><td>Renato Alves</td><td>8699999-2000</td></tr>
+    </tbody></table>
+  </div>
+  <div class="g3">
+    <div class="c"><span class="tag gold">Chave primária</span><h3>id_cliente</h3><p>Escolhida pelo projetista para identificar cada tupla.</p></div>
+    <div class="c"><span class="tag">Chave candidata</span><h3>cpf</h3><p>Também poderia identificar cliente se a regra de negócio garantir unicidade.</p></div>
+    <div class="c"><span class="tag">Chave candidata</span><h3>email</h3><p>Pode ser única no sistema, mas muda com mais frequência que um identificador interno.</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Chave estrangeira</div><h2>Como uma tabela referencia outra?</h2></div><div class="n">10</div></div>
+  <div class="relset">
+    <div class="rel"><div class="relname">DEPARTAMENTO</div><div class="tablewrap"><table><thead><tr><th class="pk">num_dep</th><th>nome</th><th class="fk">cad_gerente</th><th>data_inicio_gerente</th></tr></thead><tbody><tr><td class="pk">5</td><td>Pesquisa</td><td class="fk">333445555</td><td>2022-05-22</td></tr><tr><td class="pk">4</td><td>Administracao</td><td class="fk">987654321</td><td>2021-01-15</td></tr></tbody></table></div></div>
+    <div class="rel"><div class="relname">EMPREGADO</div><div class="tablewrap"><table><thead><tr><th class="pk">cad</th><th>nome</th><th>sexo</th><th>salario</th><th class="fk">num_dep</th><th class="fk">cad_supervisor</th></tr></thead><tbody><tr><td class="pk">333445555</td><td>Fernando</td><td>M</td><td>8000</td><td class="fk">5</td><td class="fk">888665555</td></tr><tr><td class="pk">987654321</td><td>Joana</td><td>F</td><td>7000</td><td class="fk">4</td><td class="fk">888665555</td></tr></tbody></table></div></div>
+  </div>
+  <div class="legend"><span class="pill pk">PK</span><span class="pill fk">FK</span></div>
+  <div class="call"><b>Chave estrangeira:</b> atributo em uma relação que referencia a chave primária de outra relação, preservando a integridade referencial.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Integridade referencial</div><h2>Referenciar apenas o que existe</h2></div><div class="n">11</div></div>
+  <div class="g2">
+    <div class="c"><h3 class="ok">Válido</h3><p>EMPREGADO.num_dep = 5, e existe DEPARTAMENTO.num_dep = 5.</p><p>A referência aponta para uma tupla real.</p></div>
+    <div class="c"><h3 class="bad">Inválido</h3><p>EMPREGADO.num_dep = 99, mas não existe DEPARTAMENTO.num_dep = 99.</p><p>A tabela ficaria com referência órfã.</p></div>
+  </div>
+  <div class="d"><svg viewBox="0 0 980 280">
+    <rect class="e" x="80" y="75" width="260" height="120" rx="8"/><text class="lab" x="210" y="105" text-anchor="middle">EMPREGADO</text><text class="sm" x="105" y="145">cad = 333445555</text><text class="sm" x="105" y="172">num_dep = 5 (FK)</text>
+    <rect class="e" x="640" y="75" width="260" height="120" rx="8"/><text class="lab" x="770" y="105" text-anchor="middle">DEPARTAMENTO</text><text class="sm" x="665" y="145">num_dep = 5 (PK)</text><text class="sm" x="665" y="172">nome = Pesquisa</text>
+    <path d="M340 157 C450 157,530 157,640 157" stroke="#0f766e" stroke-width="3" fill="none" marker-end="url(#arr)"/>
+    <defs><marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#0f766e"/></marker></defs>
+  </svg></div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Chave composta</div><h2>Quando uma coluna não basta</h2></div><div class="n">12</div></div>
+  <p class="lead">Uma chave concatenada ou composta é formada por dois ou mais atributos.</p>
+  <div class="relset">
+    <div class="rel"><div class="relname">LOCAIS</div><div class="tablewrap"><table><thead><tr><th class="both">num_dep</th><th class="both">local</th></tr></thead><tbody><tr><td class="both">5</td><td class="both">Teresina</td></tr><tr><td class="both">5</td><td class="both">Picos</td></tr><tr><td class="both">4</td><td class="both">Floriano</td></tr></tbody></table></div></div>
+  </div>
+  <div class="call"><b>Por que composta?</b> O mesmo departamento pode ter vários locais e o mesmo nome de local pode aparecer em contextos diferentes. A combinação <b>(num_dep, local)</b> identifica a tupla.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">PK/FK na prática</div><h2>Cliente 1:N Conta corrente</h2></div><div class="n">13</div></div>
+  <p class="lead">Regra de negócio: um cliente pode possuir várias contas correntes; cada conta corrente possui apenas um cliente associado.</p>
+  <div class="d"><svg viewBox="0 0 980 240">
+    <rect class="e" x="90" y="80" width="210" height="80" rx="8"/><text class="lab" x="195" y="128" text-anchor="middle">CLIENTE</text>
+    <polygon class="r" points="490,60 610,120 490,180 370,120"/><text class="lab" x="490" y="126" text-anchor="middle">POSSUI</text>
+    <rect class="e" x="700" y="80" width="230" height="80" rx="8"/><text class="lab" x="815" y="128" text-anchor="middle">CONTA_CORRENTE</text>
+    <path d="M300 120H370M610 120H700" stroke="#31494e" stroke-width="2"/>
+    <text class="lab" x="330" y="105">1</text><text class="lab" x="660" y="105">N</text>
+  </svg></div>
+  <div class="g2 bank-pair">
+    <div><div class="relname">CLIENTE</div><div class="tablewrap"><table class="sample"><thead><tr><th class="pk">id_cliente</th><th>nome</th><th>cpf</th><th>cidade</th><th>segmento</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">101</td><td>Marina Costa</td><td>123.456.789-00</td><td>Teresina</td><td>Universitario</td></tr>
+      <tr><td class="pk">102</td><td>Renato Alves</td><td>321.654.987-00</td><td>Campo Maior</td><td>Servidor publico</td></tr>
+      <tr><td class="pk">103</td><td>Patricia Nunes</td><td>777.888.999-00</td><td>Parnaiba</td><td>Empresarial</td></tr>
+      <tr><td class="pk">104</td><td>Diego Rocha</td><td>555.444.333-22</td><td>Picos</td><td>Autonomo</td></tr>
+    </tbody></table></div></div>
+    <div><div class="relname">CONTA_CORRENTE</div><div class="tablewrap"><table class="sample"><thead><tr><th class="pk">num_conta</th><th>agencia</th><th>saldo</th><th>limite</th><th>data_abertura</th><th class="fk">id_cliente</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">000123-4</td><td>0101</td><td>2450.00</td><td>1000.00</td><td>2024-03-12</td><td class="fk">101</td></tr>
+      <tr class="focus-row"><td class="pk">000124-2</td><td>0101</td><td>850.75</td><td>500.00</td><td>2025-08-20</td><td class="fk">101</td></tr>
+      <tr class="focus-row"><td class="pk">000130-9</td><td>0200</td><td>12890.10</td><td>2500.00</td><td>2026-01-18</td><td class="fk">101</td></tr>
+      <tr><td class="pk">000155-0</td><td>0101</td><td>340.20</td><td>300.00</td><td>2023-11-05</td><td class="fk">102</td></tr>
+      <tr><td class="pk">000188-7</td><td>0300</td><td>9800.00</td><td>4000.00</td><td>2024-07-01</td><td class="fk">103</td></tr>
+      <tr><td class="pk">000199-1</td><td>0200</td><td>120.00</td><td>0.00</td><td>2026-05-03</td><td class="fk">104</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="legend"><span class="pill pk">CLIENTE.id_cliente = PK</span><span class="pill fk">CONTA_CORRENTE.id_cliente = FK</span><span class="pill">linhas verdes = contas do cliente 101</span></div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Integridade referencial</div><h2>O problema das contas órfãs</h2></div><div class="n">14</div></div>
+  <p class="lead">Uma conta corrente não pode apontar para um cliente inexistente. A FK deve corresponder a algum valor válido da PK em CLIENTE.</p>
+  <div class="g2">
+    <div class="tablewrap"><table class="sample"><thead><tr><th class="pk">id_cliente</th><th>nome</th><th>cpf</th><th>status</th></tr></thead><tbody>
+      <tr><td class="pk">101</td><td>Marina Costa</td><td>123.456.789-00</td><td>ativo</td></tr>
+      <tr><td class="pk">102</td><td>Renato Alves</td><td>321.654.987-00</td><td>ativo</td></tr>
+      <tr><td class="pk">103</td><td>Patricia Nunes</td><td>777.888.999-00</td><td>ativo</td></tr>
+      <tr><td class="pk">104</td><td>Diego Rocha</td><td>555.444.333-22</td><td>ativo</td></tr>
+    </tbody></table></div>
+    <div class="tablewrap"><table class="sample"><thead><tr><th class="pk">num_conta</th><th>agencia</th><th>saldo</th><th class="fk">id_cliente</th><th>situação</th></tr></thead><tbody>
+      <tr><td class="pk">000123-4</td><td>0101</td><td>2450.00</td><td class="fk">101</td><td class="ok">válida</td></tr>
+      <tr><td class="pk">000155-0</td><td>0101</td><td>340.20</td><td class="fk">102</td><td class="ok">válida</td></tr>
+      <tr class="orphan-row"><td class="pk">000177-3</td><td>0400</td><td>910.00</td><td class="fk">999</td><td class="bad">órfã</td></tr>
+      <tr class="orphan-row"><td class="pk">000201-4</td><td>0200</td><td>75.90</td><td class="fk">105</td><td class="bad">órfã</td></tr>
+      <tr><td class="pk">000188-7</td><td>0300</td><td>9800.00</td><td class="fk">103</td><td class="ok">válida</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="g2">
+    <div class="c"><h3>O que está errado?</h3><p>Não existem clientes com <b>id_cliente = 999</b> nem <b>id_cliente = 105</b>. As contas destacadas apontam para registros que não existem.</p></div>
+    <div class="c"><h3>Como o SGBD protege?</h3><p>A restrição de FK impede inserir ou manter uma conta com id_cliente inexistente, a menos que a regra permita nulo ou outra ação explícita.</p></div>
+  </div>
+  <div class="call warn"><b>Mensagem para fixar:</b> chave estrangeira não é apenas uma coluna repetida; é um contrato de consistência entre tabelas.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Transição</div><h2>Do MER ao modelo relacional</h2></div><div class="n">15</div></div>
+  <div class="steps"><span>Modelo conceitual</span><span>MER / DER</span><span>Conversão</span><span>Modelo lógico relacional</span><span>Tabelas</span></div>
+  <div class="g2">
+    <div class="c"><h3>No modelo conceitual</h3><p>Pensamos em entidades, atributos, relacionamentos, cardinalidades, entidades fracas, multivalorados e herança.</p></div>
+    <div class="c"><h3>No modelo lógico</h3><p>Representamos a estrutura por tabelas, chaves primárias, chaves estrangeiras e restrições.</p></div>
+  </div>
+  <div class="call"><b>Ideia alinhada ao Capítulo 3 de Elmasri/Navathe:</b> o MER organiza o domínio em entidades, relacionamentos, atributos e restrições. O mapeamento relacional preserva essas decisões em tabelas.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Exemplo do material</div><h2>DER de empresa</h2></div><div class="n">16</div></div>
+  <div class="imggrid">
+    <img class="srcimg" src="assets_relacional/slide-33.png" alt="DER de empresa do material original">
+    <div class="c">
+      <h3>Conceitos presentes</h3>
+      <ul>
+        <li>Entidades regulares: EMPREGADO, DEPARTAMENTO e PROJETO.</li>
+        <li>Entidade fraca: DEPENDENTES.</li>
+        <li>Relacionamentos 1:1, 1:N, N:M e autorrelacionamento.</li>
+        <li>Atributo multivalorado: locais de departamento.</li>
+        <li>Atributos de relacionamento: data_ini e horas.</li>
+      </ul>
+      <p class="smalltext">A aula usa esta estrutura como fio condutor, mas reconstrói as tabelas em HTML para destacar PK, FK e relações.</p>
+    </div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Regra 1</div><h2>Entidade regular vira tabela</h2></div><div class="n">17</div></div>
+  <p class="lead">Para cada entidade regular E no esquema ER, criar uma relação R e incluir seus atributos simples.</p>
+  <div class="g2">
+    <div class="d"><svg viewBox="0 0 520 270"><rect class="e" x="180" y="95" width="170" height="75" rx="8"/><text class="lab" x="265" y="140" text-anchor="middle">EMPREGADO</text><ellipse class="ak" cx="80" cy="65" rx="58" ry="28"/><text class="sm" x="80" y="70" text-anchor="middle">cad</text><ellipse class="a" cx="250" cy="45" rx="62" ry="28"/><text class="sm" x="250" y="50" text-anchor="middle">nome</text><ellipse class="a" cx="430" cy="75" rx="62" ry="28"/><text class="sm" x="430" y="80" text-anchor="middle">salario</text><path d="M125 80L195 95M250 73V95M385 90L335 105" stroke="#718187"/></svg></div>
+    <div class="tablewrap"><table><thead><tr><th class="pk">cad</th><th>nome</th><th>sexo</th><th>salario</th></tr></thead><tbody><tr><td class="pk">333445555</td><td>Fernando</td><td>M</td><td>8000</td></tr><tr><td class="pk">987654321</td><td>Joana</td><td>F</td><td>7000</td></tr></tbody></table></div>
+  </div>
+  <div class="call"><b>Resultado:</b> a chave da entidade vira chave primária da tabela.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Regra 2</div><h2>Entidade fraca depende da proprietária</h2></div><div class="n">18</div></div>
+  <p class="lead">Para entidade fraca W com proprietária E, criar uma relação para W, incluir seus atributos e a chave primária de E.</p>
+  <div class="g2">
+    <div class="d"><svg viewBox="0 0 760 270"><rect class="e" x="50" y="95" width="180" height="75" rx="8"/><text class="lab" x="140" y="140" text-anchor="middle">EMPREGADO</text><polygon class="r" points="380,75 500,132 380,189 260,132"/><text class="sm" x="380" y="137" text-anchor="middle">DEPENDENTE DE</text><rect class="weak" x="550" y="95" width="180" height="75" rx="8"/><text class="lab" x="640" y="140" text-anchor="middle">DEPENDENTE</text><path d="M230 132H260M500 132H550" stroke="#31494e" stroke-width="2"/><text class="sm" x="245" y="117">1</text><text class="sm" x="515" y="117">N</text></svg></div>
+    <div class="tablewrap"><table><thead><tr><th class="both">cad_emp</th><th class="both">nome_dependente</th><th>data_nascimento</th><th>parentesco</th></tr></thead><tbody><tr><td class="both">333445555</td><td class="both">Lucas</td><td>2014-09-10</td><td>filho</td></tr><tr><td class="both">333445555</td><td class="both">Lia</td><td>2018-03-21</td><td>filha</td></tr></tbody></table></div>
+  </div>
+  <div class="call"><b>PK de DEPENDENTE:</b> combinação da chave do proprietário com a chave parcial da entidade fraca.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Regra 3</div><h2>Relacionamento 1:1</h2></div><div class="n">19</div></div>
+  <p class="lead">Em relacionamento 1:1, escolhe-se uma das tabelas participantes para receber a FK da outra, incluindo também atributos do relacionamento.</p>
+  <div class="relset">
+    <div class="rel"><div class="relname">DEPARTAMENTO</div><div class="tablewrap"><table><thead><tr><th class="pk">num_dep</th><th>nome</th><th class="fk">cad_gerente</th><th>data_ini</th></tr></thead><tbody>
+      <tr><td class="pk">5</td><td>Pesquisa</td><td class="fk">333445555</td><td>2022-05-22</td></tr>
+      <tr><td class="pk">4</td><td>Administracao</td><td class="fk">987654321</td><td>2021-01-15</td></tr>
+      <tr><td class="pk">7</td><td>TI Academica</td><td class="fk">123456789</td><td>2024-08-01</td></tr>
+      <tr><td class="pk">9</td><td>Extensao</td><td class="fk">777888999</td><td>2025-03-10</td></tr>
+    </tbody></table></div></div>
+    <div class="rel"><div class="relname">EMPREGADO</div><div class="tablewrap"><table><thead><tr><th class="pk">cad</th><th>nome</th><th>salario</th><th class="fk">num_dep</th></tr></thead><tbody>
+      <tr><td class="pk">333445555</td><td>Fernando Lima</td><td>8000</td><td class="fk">5</td></tr>
+      <tr><td class="pk">987654321</td><td>Joana Alves</td><td>7000</td><td class="fk">4</td></tr>
+      <tr><td class="pk">123456789</td><td>Carlos Mendes</td><td>7600</td><td class="fk">7</td></tr>
+      <tr><td class="pk">777888999</td><td>Helena Rocha</td><td>6900</td><td class="fk">9</td></tr>
+      <tr><td class="pk">222333444</td><td>Luiza Nunes</td><td>5200</td><td class="fk">5</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="call"><b>Leitura:</b> cada departamento possui no máximo um gerente, e cada gerente aparece uma vez em DEPARTAMENTO. A FK <b>cad_gerente</b> aponta para EMPREGADO.cad; <b>data_ini</b> descreve o relacionamento gerencia.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Regra 4</div><h2>Relacionamento 1:N</h2></div><div class="n">20</div></div>
+  <p class="lead">No relacionamento 1:N, a chave primária do lado 1 entra como chave estrangeira na tabela do lado N.</p>
+  <div class="g2">
+    <div class="d"><svg viewBox="0 0 800 260"><rect class="e" x="60" y="90" width="190" height="80" rx="8"/><text class="lab" x="155" y="138" text-anchor="middle">DEPARTAMENTO</text><polygon class="r" points="400,70 520,130 400,190 280,130"/><text class="lab" x="400" y="136" text-anchor="middle">POSSUI</text><rect class="e" x="560" y="90" width="190" height="80" rx="8"/><text class="lab" x="655" y="138" text-anchor="middle">EMPREGADO</text><path d="M250 130H280M520 130H560" stroke="#31494e" stroke-width="2"/><text class="lab" x="265" y="115">1</text><text class="lab" x="535" y="115">N</text></svg></div>
+    <div class="tablewrap"><table><thead><tr><th class="pk">cad</th><th>nome</th><th>cargo</th><th>salario</th><th class="fk">num_dep</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">333445555</td><td>Fernando Lima</td><td>Analista</td><td>8000</td><td class="fk">5</td></tr>
+      <tr><td class="pk">987654321</td><td>Joana Alves</td><td>Coordenadora</td><td>7000</td><td class="fk">4</td></tr>
+      <tr class="focus-row"><td class="pk">222333444</td><td>Luiza Nunes</td><td>Programadora</td><td>5200</td><td class="fk">5</td></tr>
+      <tr class="focus-row"><td class="pk">555666777</td><td>Rafael Sousa</td><td>DBA</td><td>6100</td><td class="fk">5</td></tr>
+      <tr><td class="pk">123456789</td><td>Carlos Mendes</td><td>Supervisor</td><td>7600</td><td class="fk">7</td></tr>
+      <tr><td class="pk">777888999</td><td>Helena Rocha</td><td>Assessora</td><td>6900</td><td class="fk">9</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="call"><b>Regra prática:</b> procure o lado N. Os empregados destacados têm <b>num_dep = 5</b>, portanto todos apontam para o mesmo departamento Pesquisa.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Exemplo próprio</div><h2>Curso 1:N Disciplina</h2></div><div class="n">21</div></div>
+  <div class="relset">
+    <div class="rel"><div class="relname">CURSO</div><div class="tablewrap"><table><thead><tr><th class="pk">id_curso</th><th>nome</th><th>nivel</th><th>campus</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">1</td><td>ADS</td><td>Tecnologo</td><td>Campo Maior</td></tr>
+      <tr><td class="pk">2</td><td>Licenciatura em Computacao</td><td>Superior</td><td>Teresina</td></tr>
+      <tr><td class="pk">3</td><td>Sistemas para Internet</td><td>Tecnologo</td><td>Picos</td></tr>
+    </tbody></table></div></div>
+    <div class="rel"><div class="relname">DISCIPLINA</div><div class="tablewrap"><table><thead><tr><th class="pk">id_disciplina</th><th>nome</th><th>periodo</th><th>carga_horaria</th><th class="fk">id_curso</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">101</td><td>Banco de Dados I</td><td>2</td><td>60</td><td class="fk">1</td></tr>
+      <tr class="focus-row"><td class="pk">102</td><td>Programacao Web</td><td>2</td><td>80</td><td class="fk">1</td></tr>
+      <tr class="focus-row"><td class="pk">103</td><td>Engenharia de Software</td><td>3</td><td>60</td><td class="fk">1</td></tr>
+      <tr class="focus-row"><td class="pk">104</td><td>Estrutura de Dados</td><td>2</td><td>80</td><td class="fk">1</td></tr>
+      <tr><td class="pk">201</td><td>Didatica</td><td>4</td><td>60</td><td class="fk">2</td></tr>
+      <tr><td class="pk">301</td><td>Design de Interfaces</td><td>1</td><td>60</td><td class="fk">3</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="call"><b>Leitura:</b> as linhas destacadas mostram disciplinas de ADS. Todas têm <b>DISCIPLINA.id_curso = 1</b>, referenciando <b>CURSO.id_curso = 1</b>.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Regra 5</div><h2>Relacionamento N:M vira tabela própria</h2></div><div class="n">22</div></div>
+  <p class="lead">Para relacionamento N:M, criar uma nova relação para representar o relacionamento. As FKs das entidades participantes normalmente formam a PK composta.</p>
+  <div class="g2 bank-pair">
+    <div><div class="relname">EMPREGADO</div><div class="tablewrap"><table><thead><tr><th class="pk">cad</th><th>nome</th></tr></thead><tbody><tr class="focus-row"><td class="pk">333445555</td><td>Fernando Lima</td></tr><tr><td class="pk">987654321</td><td>Joana Alves</td></tr><tr><td class="pk">222333444</td><td>Luiza Nunes</td></tr></tbody></table></div></div>
+    <div><div class="relname">PROJETO</div><div class="tablewrap"><table><thead><tr><th class="pk">num_proj</th><th>nome</th><th>local</th></tr></thead><tbody><tr class="focus-row"><td class="pk">10</td><td>Portal Academico</td><td>Teresina</td></tr><tr><td class="pk">20</td><td>App Biblioteca</td><td>Picos</td></tr><tr><td class="pk">30</td><td>BI Evasao</td><td>Parnaiba</td></tr></tbody></table></div></div>
+  </div>
+  <div class="relset">
+    <div class="rel"><div class="relname">TRABALHA_EM</div><div class="tablewrap"><table><thead><tr><th class="both">cad_emp</th><th class="both">num_proj</th><th>horas</th><th>papel</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="both">333445555</td><td class="both">10</td><td>12.5</td><td>Analise</td></tr>
+      <tr><td class="both">333445555</td><td class="both">30</td><td>6.0</td><td>Modelagem</td></tr>
+      <tr><td class="both">987654321</td><td class="both">20</td><td>8.0</td><td>Coordenacao</td></tr>
+      <tr><td class="both">222333444</td><td class="both">10</td><td>16.0</td><td>Implementacao</td></tr>
+      <tr><td class="both">222333444</td><td class="both">20</td><td>10.0</td><td>Testes</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="call"><b>Leitura:</b> Fernando trabalha em dois projetos. O projeto 10 possui Fernando e Luiza. A relação TRABALHA_EM é a associação N:M materializada.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Exemplo próprio</div><h2>Aluno N:M Disciplina</h2></div><div class="n">23</div></div>
+  <div class="relset">
+    <div class="rel"><div class="relname">ALUNO</div><div class="tablewrap"><table><thead><tr><th class="pk">matricula</th><th>nome</th><th>turma</th></tr></thead><tbody><tr class="focus-row"><td class="pk">20261001</td><td>Ana Moura</td><td>ADS-2</td></tr><tr><td class="pk">20261002</td><td>Bruno Lima</td><td>ADS-2</td></tr><tr><td class="pk">20261003</td><td>Carla Sousa</td><td>ADS-2</td></tr><tr><td class="pk">20261004</td><td>Diego Martins</td><td>ADS-3</td></tr></tbody></table></div></div>
+    <div class="rel"><div class="relname">DISCIPLINA</div><div class="tablewrap"><table><thead><tr><th class="pk">cod_disciplina</th><th>nome</th><th>ch</th></tr></thead><tbody><tr class="focus-row"><td class="pk">BD1</td><td>Banco de Dados I</td><td>60</td></tr><tr><td class="pk">WEB1</td><td>Programacao Web</td><td>80</td></tr><tr><td class="pk">ES1</td><td>Engenharia de Software</td><td>60</td></tr></tbody></table></div></div>
+    <div class="rel"><div class="relname">MATRICULA</div><div class="tablewrap"><table><thead><tr><th class="both">matricula_aluno</th><th class="both">cod_disciplina</th><th>data_matricula</th><th>nota_final</th><th>situacao</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="both">20261001</td><td class="both">BD1</td><td>2026-02-10</td><td>8.5</td><td>Aprovada</td></tr>
+      <tr class="focus-row"><td class="both">20261001</td><td class="both">WEB1</td><td>2026-02-10</td><td>9.0</td><td>Aprovada</td></tr>
+      <tr><td class="both">20261002</td><td class="both">BD1</td><td>2026-02-10</td><td>7.0</td><td>Aprovada</td></tr>
+      <tr><td class="both">20261002</td><td class="both">ES1</td><td>2026-02-11</td><td>6.5</td><td>Aprovada</td></tr>
+      <tr><td class="both">20261003</td><td class="both">BD1</td><td>2026-02-12</td><td>5.0</td><td>Final</td></tr>
+      <tr><td class="both">20261004</td><td class="both">WEB1</td><td>2026-02-12</td><td>8.0</td><td>Aprovada</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="call"><b>Reforço:</b> Ana Moura aparece em duas disciplinas. A tabela MATRÍCULA resolve o N:M e permite registrar nota_final e situação para cada par aluno-disciplina.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Regra 6</div><h2>Atributo multivalorado vira tabela</h2></div><div class="n">24</div></div>
+  <p class="lead">Para cada atributo multivalorado A, criar uma relação com A e a chave primária da relação proprietária.</p>
+  <div class="g2">
+    <div class="c"><h3>No ER</h3><p>DEPARTAMENTO tem vários <b>locais</b>.</p><p>Guardar vários locais na mesma coluna violaria a atomicidade e dificultaria consultas.</p></div>
+    <div class="tablewrap"><table><thead><tr><th class="both">num_dep</th><th class="both">local</th><th>tipo_unidade</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="both">5</td><td class="both">Teresina</td><td>Sede</td></tr>
+      <tr class="focus-row"><td class="both">5</td><td class="both">Picos</td><td>Laboratorio</td></tr>
+      <tr class="focus-row"><td class="both">5</td><td class="both">Parnaiba</td><td>Polo</td></tr>
+      <tr><td class="both">4</td><td class="both">Floriano</td><td>Sede</td></tr>
+      <tr><td class="both">7</td><td class="both">Campo Maior</td><td>Campus</td></tr>
+      <tr><td class="both">7</td><td class="both">Piripiri</td><td>Polo</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="call"><b>PK de LOCAIS:</b> combinação de <b>num_dep</b> e <b>local</b>. O departamento 5 aparece em três linhas porque possui três locais.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Esquema resultante</div><h2>Empresa mapeada</h2></div><div class="n">25</div></div>
+  <div class="g2 bank-pair">
+    <div><div class="relname">EMPREGADO</div><div class="tablewrap"><table><thead><tr><th class="pk">cad</th><th>nome</th><th>sexo</th><th>salario</th><th class="fk">num_dep</th><th class="fk">cad_spv</th></tr></thead><tbody><tr><td class="pk">333445555</td><td>Fernando</td><td>M</td><td>8000</td><td class="fk">5</td><td class="fk">888665555</td></tr><tr><td class="pk">987654321</td><td>Joana</td><td>F</td><td>7000</td><td class="fk">4</td><td class="fk">888665555</td></tr><tr><td class="pk">222333444</td><td>Luiza</td><td>F</td><td>5200</td><td class="fk">5</td><td class="fk">333445555</td></tr></tbody></table></div></div>
+    <div><div class="relname">DEPARTAMENTO</div><div class="tablewrap"><table><thead><tr><th class="pk">numero</th><th>nome</th><th class="fk">cad_ger</th><th>data_ini</th></tr></thead><tbody><tr><td class="pk">5</td><td>Pesquisa</td><td class="fk">333445555</td><td>2022-05-22</td></tr><tr><td class="pk">4</td><td>Administracao</td><td class="fk">987654321</td><td>2021-01-15</td></tr></tbody></table></div></div>
+    <div><div class="relname">PROJETO</div><div class="tablewrap"><table><thead><tr><th class="pk">numero</th><th>nome</th><th class="fk">num_dep</th><th>local</th></tr></thead><tbody><tr><td class="pk">10</td><td>Portal Academico</td><td class="fk">5</td><td>Teresina</td></tr><tr><td class="pk">20</td><td>App Biblioteca</td><td class="fk">4</td><td>Picos</td></tr><tr><td class="pk">30</td><td>BI Evasao</td><td class="fk">5</td><td>Parnaiba</td></tr></tbody></table></div></div>
+    <div><div class="relname">TRABALHA_EM</div><div class="tablewrap"><table><thead><tr><th class="both">cad_emp</th><th class="both">num_proj</th><th>horas</th></tr></thead><tbody><tr><td class="both">333445555</td><td class="both">10</td><td>12.5</td></tr><tr><td class="both">333445555</td><td class="both">30</td><td>6.0</td></tr><tr><td class="both">222333444</td><td class="both">10</td><td>16.0</td></tr></tbody></table></div></div>
+  </div>
+  <div class="relset">
+    <div class="rel"><div class="relname">DEPENDENTE</div><div class="tablewrap"><table><thead><tr><th class="both">cad_emp</th><th class="both">nome</th><th>data_nascimento</th><th>grau_parentesco</th></tr></thead><tbody><tr><td class="both">333445555</td><td class="both">Lucas</td><td>2014-09-10</td><td>filho</td></tr><tr><td class="both">333445555</td><td class="both">Lia</td><td>2018-03-21</td><td>filha</td></tr><tr><td class="both">987654321</td><td class="both">Paulo</td><td>2010-07-02</td><td>filho</td></tr></tbody></table></div></div>
+  </div>
+  <div class="legend"><span class="pill pk">PK</span><span class="pill fk">FK</span><span class="pill both">PK + FK</span></div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Atividade guiada</div><h2>Domínio Escola</h2></div><div class="n">26</div></div>
+  <div class="g2 bank-pair">
+    <div><div class="relname">ALUNO</div><div class="tablewrap"><table><thead><tr><th class="pk">mat</th><th>nome</th><th>periodo</th></tr></thead><tbody><tr class="focus-row"><td class="pk">20261001</td><td>Ana Moura</td><td>2</td></tr><tr><td class="pk">20261002</td><td>Bruno Lima</td><td>2</td></tr><tr><td class="pk">20261003</td><td>Carla Sousa</td><td>3</td></tr></tbody></table></div></div>
+    <div><div class="relname">DISCIPLINA</div><div class="tablewrap"><table><thead><tr><th class="pk">cod</th><th>nome</th><th>ch</th></tr></thead><tbody><tr class="focus-row"><td class="pk">BD1</td><td>Banco de Dados I</td><td>60</td></tr><tr><td class="pk">WEB1</td><td>Programacao Web</td><td>80</td></tr><tr><td class="pk">ES1</td><td>Engenharia de Software</td><td>60</td></tr></tbody></table></div></div>
+    <div><div class="relname">FONE_ALUNO</div><div class="tablewrap"><table><thead><tr><th class="both">mat_aluno</th><th class="both">fone</th><th>tipo</th></tr></thead><tbody><tr class="focus-row"><td class="both">20261001</td><td class="both">8699999-1000</td><td>celular</td></tr><tr class="focus-row"><td class="both">20261001</td><td class="both">863222-1000</td><td>residencial</td></tr><tr><td class="both">20261002</td><td class="both">8699999-2000</td><td>celular</td></tr></tbody></table></div></div>
+    <div><div class="relname">CURSA</div><div class="tablewrap"><table><thead><tr><th class="both">mat_aluno</th><th class="both">cod_disciplina</th><th>data</th><th>frequencia</th></tr></thead><tbody><tr class="focus-row"><td class="both">20261001</td><td class="both">BD1</td><td>2026-02-10</td><td>92%</td></tr><tr class="focus-row"><td class="both">20261001</td><td class="both">WEB1</td><td>2026-02-10</td><td>96%</td></tr><tr><td class="both">20261002</td><td class="both">BD1</td><td>2026-02-10</td><td>88%</td></tr><tr><td class="both">20261003</td><td class="both">ES1</td><td>2026-02-12</td><td>90%</td></tr></tbody></table></div></div>
+  </div>
+  <div class="call"><b>Leitura:</b> Ana Moura possui dois telefones e cursa duas disciplinas. FONE_ALUNO resolve o multivalorado; CURSA resolve o N:M entre ALUNO e DISCIPLINA.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Regra 7</div><h2>Relacionamento n-ário</h2></div><div class="n">27</div></div>
+  <p class="lead">Para relacionamento n-ário (n > 2), criar uma nova relação S para representar o relacionamento e incluir as chaves das entidades participantes como FKs.</p>
+  <div class="imggrid">
+    <img class="srcimg" src="assets_relacional/slide-47.png" alt="Relacionamento ternário CAC do material original">
+    <div class="tablewrap"><table><thead><tr><th class="both">cod_cliente</th><th class="both">num_conta</th><th class="both">num_agencia</th></tr></thead><tbody><tr><td class="both">10</td><td class="both">12345-0</td><td class="both">0987</td></tr><tr><td class="both">11</td><td class="both">77777-2</td><td class="both">0987</td></tr></tbody></table></div>
+  </div>
+  <div class="call"><b>Por que não dividir automaticamente em três relacionamentos binários?</b> Porque a regra pode depender da combinação simultânea cliente-conta-agência.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Regra 8</div><h2>Atributo composto vira atributos simples</h2></div><div class="n">28</div></div>
+  <p class="lead">Para atributo composto C de uma entidade E, incluir seus componentes como atributos da relação criada para E.</p>
+  <div class="g2">
+    <div class="d"><svg viewBox="0 0 700 300"><rect class="e" x="285" y="135" width="140" height="70" rx="8"/><text class="lab" x="355" y="177" text-anchor="middle">PESSOA</text><ellipse class="ak" cx="110" cy="85" rx="55" ry="28"/><text class="sm" x="110" y="90" text-anchor="middle">cod</text><ellipse class="a" cx="355" cy="70" rx="78" ry="30"/><text class="sm" x="355" y="75" text-anchor="middle">nome</text><ellipse class="a" cx="255" cy="25" rx="70" ry="24"/><text class="xs" x="255" y="30" text-anchor="middle">primeiro</text><ellipse class="a" cx="355" cy="25" rx="72" ry="24"/><text class="xs" x="355" y="30" text-anchor="middle">meio</text><ellipse class="a" cx="455" cy="25" rx="70" ry="24"/><text class="xs" x="455" y="30" text-anchor="middle">ultimo</text><ellipse class="a" cx="585" cy="165" rx="62" ry="28"/><text class="sm" x="585" y="170" text-anchor="middle">sexo</text><path d="M155 100L285 145M355 100V135M425 165H523M300 44L325 55M355 49V40M410 44L385 55" stroke="#718187"/></svg></div>
+    <div class="tablewrap"><table><thead><tr><th class="pk">cod</th><th>primeiro_nome</th><th>nome_meio</th><th>ultimo_nome</th><th>sexo</th></tr></thead><tbody><tr><td class="pk">1</td><td>Maria</td><td>de Fatima</td><td>Alves</td><td>F</td></tr></tbody></table></div>
+  </div>
+  <div class="call"><b>Não se guarda a elipse composta "nome".</b> Guardam-se seus componentes úteis para consulta e regra de negócio.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Regra 9</div><h2>Generalização e especialização</h2></div><div class="n">29</div></div>
+  <p class="lead">A entidade de nível superior gera uma relação. Cada subtipo pode gerar uma relação própria, usando a PK do supertipo também como PK e FK.</p>
+  <div class="imggrid">
+    <img class="srcimg" src="assets_relacional/slide-51.png" alt="Herança Cliente Pessoa Física Pessoa Jurídica">
+    <div class="relset" style="margin-top:0">
+      <div class="rel"><div class="relname">CLIENTE</div><div class="tablewrap"><table><thead><tr><th class="pk">cod</th><th>nome</th></tr></thead><tbody><tr><td class="pk">100</td><td>Maria Alves</td></tr></tbody></table></div></div>
+      <div class="rel"><div class="relname">PESSOA_FISICA</div><div class="tablewrap"><table><thead><tr><th class="both">cod_cliente</th><th>cpf</th><th>sexo</th></tr></thead><tbody><tr><td class="both">100</td><td>123.456.789-00</td><td>F</td></tr></tbody></table></div></div>
+      <div class="rel"><div class="relname">PESSOA_JURIDICA</div><div class="tablewrap"><table><thead><tr><th class="both">cod_cliente</th><th>cnpj</th></tr></thead></table></div></div>
+    </div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Exemplo próprio</div><h2>Clínica médica: do ER às tabelas</h2></div><div class="n">30</div></div>
+  <p class="lead">Médico e paciente têm relação N:M ao longo do tempo. A tabela CONSULTA registra cada encontro, com FKs para MEDICO e PACIENTE.</p>
+  <div class="g2 bank-pair">
+    <div><div class="relname">MEDICO</div><div class="tablewrap"><table><thead><tr><th class="pk">crm</th><th>nome</th><th>especialidade</th><th>telefone</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">CRM-PI-1234</td><td>Marcos Vieira</td><td>Cardiologia</td><td>8699999-0101</td></tr>
+      <tr><td class="pk">CRM-PI-2222</td><td>Luciana Reis</td><td>Dermatologia</td><td>8699999-0202</td></tr>
+      <tr><td class="pk">CRM-PI-3333</td><td>Pedro Araujo</td><td>Clínica geral</td><td>8699999-0303</td></tr>
+    </tbody></table></div></div>
+    <div><div class="relname">PACIENTE</div><div class="tablewrap"><table><thead><tr><th class="pk">cpf</th><th>nome</th><th>data_nascimento</th><th>telefone</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">111.222.333-44</td><td>Ana Moura</td><td>1998-04-12</td><td>8698888-1000</td></tr>
+      <tr><td class="pk">222.333.444-55</td><td>Bruno Lima</td><td>2001-09-30</td><td>8698888-2000</td></tr>
+      <tr><td class="pk">333.444.555-66</td><td>Carla Sousa</td><td>1989-01-08</td><td>8698888-3000</td></tr>
+      <tr><td class="pk">444.555.666-77</td><td>Diego Martins</td><td>1977-11-22</td><td>8698888-4000</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="relset">
+    <div class="rel"><div class="relname">CONSULTA</div><div class="tablewrap"><table><thead><tr><th class="pk">id_consulta</th><th class="fk">crm_medico</th><th class="fk">cpf_paciente</th><th>data</th><th>horario</th><th>tipo</th><th>status</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">9001</td><td class="fk">CRM-PI-1234</td><td class="fk">111.222.333-44</td><td>2026-10-08</td><td>08:30</td><td>Retorno</td><td>Agendada</td></tr>
+      <tr><td class="pk">9002</td><td class="fk">CRM-PI-1234</td><td class="fk">222.333.444-55</td><td>2026-10-08</td><td>09:00</td><td>Primeira consulta</td><td>Agendada</td></tr>
+      <tr><td class="pk">9003</td><td class="fk">CRM-PI-2222</td><td class="fk">111.222.333-44</td><td>2026-10-09</td><td>14:00</td><td>Avaliacao</td><td>Confirmada</td></tr>
+      <tr><td class="pk">9004</td><td class="fk">CRM-PI-3333</td><td class="fk">333.444.555-66</td><td>2026-10-09</td><td>15:30</td><td>Retorno</td><td>Concluida</td></tr>
+      <tr><td class="pk">9005</td><td class="fk">CRM-PI-2222</td><td class="fk">444.555.666-77</td><td>2026-10-10</td><td>10:00</td><td>Primeira consulta</td><td>Agendada</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="call"><b>Pela representação:</b> Ana Moura possui consulta 9001 com Marcos Vieira em 08/10/2026 às 08:30 e também consulta 9003 com Luciana Reis em 09/10/2026 às 14:00.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Exercício do material</div><h2>Oficina: relacionamento ternário</h2></div><div class="n">31</div></div>
+  <div class="imggrid">
+    <img class="srcimg" src="assets_relacional/slide-52.png" alt="Exercício Oficina">
+    <div class="c">
+      <h3>Mapeamento esperado</h3>
+      <div class="mono">OFICINA(num, nome)
+FUNCIONARIO(mat, nome)
+CURSO(cod, nome)
+OFERECE(num_oficina, mat_funcionario, cod_curso, horario)</div>
+      <p>O relacionamento envolve Oficina, Funcionário e Curso ao mesmo tempo; por isso gera uma tabela própria.</p>
+    </div>
+  </div>
+  <div class="relset">
+    <div class="rel"><div class="relname">OFERECE</div><div class="tablewrap"><table><thead><tr><th class="both">num_oficina</th><th class="both">mat_funcionario</th><th class="both">cod_curso</th><th>horario</th><th>sala</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="both">12</td><td class="both">F009</td><td class="both">BD1</td><td>19:00</td><td>Lab 02</td></tr>
+      <tr><td class="both">12</td><td class="both">F010</td><td class="both">WEB1</td><td>20:30</td><td>Lab 03</td></tr>
+      <tr><td class="both">13</td><td class="both">F009</td><td class="both">BD1</td><td>14:00</td><td>Lab 01</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Exercício do material</div><h2>Loja: atributo composto</h2></div><div class="n">32</div></div>
+  <div class="imggrid">
+    <img class="srcimg" src="assets_relacional/slide-53.png" alt="Exercício Loja">
+    <div class="tablewrap"><table><thead><tr><th class="pk">matricula</th><th>nome</th><th>idade</th><th>telefone</th><th>data_nascimento</th><th>rua</th><th>bairro</th><th>cidade</th><th>cep</th></tr></thead><tbody>
+      <tr><td class="pk">C001</td><td>Helena Rocha</td><td>34</td><td>8699999-3000</td><td>1992-05-14</td><td>Rua A</td><td>Centro</td><td>Teresina</td><td>64000-000</td></tr>
+      <tr><td class="pk">C002</td><td>Mateus Silva</td><td>28</td><td>8699999-3111</td><td>1998-02-20</td><td>Rua das Flores</td><td>Ininga</td><td>Teresina</td><td>64048-120</td></tr>
+      <tr><td class="pk">C003</td><td>Rita Campos</td><td>41</td><td>8699999-3222</td><td>1985-07-09</td><td>Av. Brasil</td><td>Centro</td><td>Campo Maior</td><td>64280-000</td></tr>
+    </tbody></table></div>
+  </div>
+  <div class="call"><b>Endereço composto:</b> em vez de uma coluna "endereco" genérica, o modelo relacional recebe rua, bairro, cidade e cep como atributos separados.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Exercício do material</div><h2>Agência bancária: especialização</h2></div><div class="n">33</div></div>
+  <div class="imggrid">
+    <img class="srcimg" src="assets_relacional/slide-54.png" alt="Exercício Agência Bancária">
+    <div class="relset" style="margin-top:0">
+      <div class="rel"><div class="relname">CONTA</div><div class="tablewrap"><table><thead><tr><th class="pk">numero</th><th>saldo</th></tr></thead><tbody><tr><td class="pk">12345-0</td><td>2450.00</td></tr><tr><td class="pk">88888-1</td><td>12000.00</td></tr><tr><td class="pk">77777-2</td><td>830.50</td></tr></tbody></table></div></div>
+      <div class="rel"><div class="relname">CONTA_CORRENTE</div><div class="tablewrap"><table><thead><tr><th class="both">numero_conta</th><th>limite</th></tr></thead><tbody><tr><td class="both">12345-0</td><td>1000.00</td></tr><tr><td class="both">77777-2</td><td>500.00</td></tr></tbody></table></div></div>
+      <div class="rel"><div class="relname">CONTA_POUPANCA</div><div class="tablewrap"><table><thead><tr><th class="both">numero_conta</th><th>taxa_juros</th></tr></thead><tbody><tr><td class="both">88888-1</td><td>0.62%</td></tr></tbody></table></div></div>
+    </div>
+  </div>
+  <div class="call"><b>Leitura:</b> toda conta especializada também precisa existir em CONTA. CONTA_CORRENTE.numero_conta e CONTA_POUPANCA.numero_conta são PK e FK ao mesmo tempo.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Exemplo adicional</div><h2>Passagens aéreas</h2></div><div class="n">34</div></div>
+  <p class="lead">Um cenário de companhia aérea reforça chaves primárias, estrangeiras e rastreamento de referências entre cliente, aeroporto, voo e passagem.</p>
+  <div class="g2 bank-pair">
+    <div><div class="relname">CLIENTE</div><div class="tablewrap"><table><thead><tr><th class="pk">id_cliente</th><th>nome</th><th>documento</th><th>cidade</th></tr></thead><tbody><tr class="focus-row"><td class="pk">10</td><td>Maria Costa</td><td>123.456.789-00</td><td>Teresina</td></tr><tr><td class="pk">11</td><td>Renato Alves</td><td>321.654.987-00</td><td>Fortaleza</td></tr><tr><td class="pk">12</td><td>Patricia Nunes</td><td>777.888.999-00</td><td>Parnaiba</td></tr><tr><td class="pk">13</td><td>Diego Rocha</td><td>555.444.333-22</td><td>Picos</td></tr></tbody></table></div></div>
+    <div><div class="relname">AEROPORTO</div><div class="tablewrap"><table><thead><tr><th class="pk">sigla</th><th>nome</th><th>cidade</th><th>uf</th></tr></thead><tbody><tr class="focus-row"><td class="pk">THE</td><td>Senador Petronio Portella</td><td>Teresina</td><td>PI</td></tr><tr class="focus-row"><td class="pk">FOR</td><td>Pinto Martins</td><td>Fortaleza</td><td>CE</td></tr><tr><td class="pk">GRU</td><td>Guarulhos</td><td>Sao Paulo</td><td>SP</td></tr><tr><td class="pk">BSB</td><td>Presidente JK</td><td>Brasilia</td><td>DF</td></tr></tbody></table></div></div>
+  </div>
+  <div class="relset">
+    <div class="rel"><div class="relname">VOO</div><div class="tablewrap"><table><thead><tr><th class="pk">id_voo</th><th>numero</th><th>companhia</th><th class="fk">origem_sigla</th><th class="fk">destino_sigla</th><th>partida</th><th>chegada</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">7001</td><td>IF1234</td><td>Azul</td><td class="fk">THE</td><td class="fk">FOR</td><td>2026-09-20 14:00</td><td>2026-09-20 15:05</td></tr>
+      <tr><td class="pk">7002</td><td>IF2270</td><td>Latam</td><td class="fk">FOR</td><td class="fk">GRU</td><td>2026-09-21 09:20</td><td>2026-09-21 12:40</td></tr>
+      <tr><td class="pk">7003</td><td>IF3301</td><td>Gol</td><td class="fk">THE</td><td class="fk">BSB</td><td>2026-10-12 08:10</td><td>2026-10-12 10:20</td></tr>
+      <tr><td class="pk">7004</td><td>IF4408</td><td>Azul</td><td class="fk">BSB</td><td class="fk">THE</td><td>2026-10-15 18:30</td><td>2026-10-15 20:45</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="call"><b>Leitura:</b> VOO usa duas FKs para AEROPORTO: <b>origem_sigla</b> e <b>destino_sigla</b>. O voo 7001 liga THE a FOR.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s dense">
+  <div class="top"><div><div class="k">Exemplo adicional</div><h2>Passagens aéreas: rastreando FKs</h2></div><div class="n">35</div></div>
+  <p class="lead">PASSAGEM liga cada cliente a um voo específico. A partir das FKs, conseguimos reconstruir quem viajou, em qual voo, origem, destino, data e assento.</p>
+  <div class="relset">
+    <div class="rel"><div class="relname">PASSAGEM</div><div class="tablewrap"><table><thead><tr><th class="pk">id_passagem</th><th class="fk">id_voo</th><th class="fk">id_cliente</th><th>assento</th><th>classe</th><th>valor</th><th>status</th></tr></thead><tbody>
+      <tr class="focus-row"><td class="pk">P900</td><td class="fk">7001</td><td class="fk">10</td><td>12A</td><td>Economica</td><td>680.00</td><td>Embarcada</td></tr>
+      <tr><td class="pk">P901</td><td class="fk">7001</td><td class="fk">11</td><td>12B</td><td>Economica</td><td>640.00</td><td>Embarcada</td></tr>
+      <tr><td class="pk">P902</td><td class="fk">7002</td><td class="fk">10</td><td>03C</td><td>Executiva</td><td>1320.00</td><td>Embarcada</td></tr>
+      <tr><td class="pk">P903</td><td class="fk">7003</td><td class="fk">12</td><td>18F</td><td>Economica</td><td>790.00</td><td>Emitida</td></tr>
+      <tr><td class="pk">P904</td><td class="fk">7004</td><td class="fk">13</td><td>07A</td><td>Economica</td><td>710.00</td><td>Emitida</td></tr>
+      <tr><td class="pk">P905</td><td class="fk">7003</td><td class="fk">10</td><td>19A</td><td>Economica</td><td>805.00</td><td>Emitida</td></tr>
+    </tbody></table></div></div>
+  </div>
+  <div class="g3">
+    <div class="c"><h3>1. Cliente</h3><p>P900 possui <b>id_cliente = 10</b>, portanto referencia Maria Costa.</p></div>
+    <div class="c"><h3>2. Voo</h3><p>P900 possui <b>id_voo = 7001</b>, portanto referencia o voo IF1234.</p></div>
+    <div class="c"><h3>3. Rota</h3><p>O voo 7001 possui origem THE e destino FOR, ambos validados em AEROPORTO.</p></div>
+  </div>
+  <div class="call"><b>Pela representação podemos concluir:</b> Maria Costa viajou de Teresina (THE) para Fortaleza (FOR) no voo IF1234, em 20/09/2026, no assento 12A, pagando R$ 680,00.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Checklist</div><h2>Como fazer o mapeamento ER -> Relacional</h2></div><div class="n">36</div></div>
+  <div class="g3">
+    <div class="c"><span class="tag">1</span><h3>Entidades</h3><p>Crie tabelas para entidades regulares e fracas.</p></div>
+    <div class="c"><span class="tag">2</span><h3>Atributos</h3><p>Inclua atributos simples; decomponha compostos; separe multivalorados.</p></div>
+    <div class="c"><span class="tag">3</span><h3>Chaves</h3><p>Defina PKs, candidatas e compostas com base em identificação única.</p></div>
+    <div class="c"><span class="tag">4</span><h3>Relacionamentos</h3><p>1:1 e 1:N geralmente viram FKs; N:M e n-ários viram tabelas.</p></div>
+    <div class="c"><span class="tag">5</span><h3>Atributos de relacionamento</h3><p>Coloque-os na tabela que representa o relacionamento ou no lado escolhido.</p></div>
+    <div class="c"><span class="tag">6</span><h3>Integridade</h3><p>Garanta que toda FK referencie uma PK existente.</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Erros comuns</div><h2>O que evitar</h2></div><div class="n">37</div></div>
+  <div class="g2">
+    <div class="c"><h3 class="bad">Coluna com lista</h3><p>Fones = "9999-1111, 9999-2222". Use uma tabela FONE_CLIENTE.</p></div>
+    <div class="c"><h3 class="bad">FK no lado errado do 1:N</h3><p>Colocar vários empregados dentro de DEPARTAMENTO cria repetição e quebra a estrutura relacional.</p></div>
+    <div class="c"><h3 class="bad">Esquecer atributo do relacionamento</h3><p>Horas em TRABALHA_EM ou nota em MATRICULA pertencem à associação.</p></div>
+    <div class="c"><h3 class="bad">Usar atributo não estável como PK</h3><p>Nome de pessoa muda, repete e não identifica bem. Prefira matrícula, CPF quando adequado ou identificador interno.</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Síntese</div><h2>Modelo relacional em uma frase</h2></div><div class="n">38</div></div>
+  <p class="q">Um banco relacional organiza dados em relações com tuplas únicas, atributos com domínios definidos e chaves que preservam identidade e referências.</p>
+  <div class="g3">
+    <div class="c"><h3>Relação</h3><p>Tabela formalmente definida.</p></div>
+    <div class="c"><h3>Domínio</h3><p>Valores válidos de um atributo.</p></div>
+    <div class="c"><h3>Esquema</h3><p>Estrutura da relação e suas restrições.</p></div>
+    <div class="c"><h3>PK</h3><p>Identifica tuplas.</p></div>
+    <div class="c"><h3>FK</h3><p>Referencia outra relação.</p></div>
+    <div class="c"><h3>Mapeamento</h3><p>Transforma ER em tabelas coerentes.</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Prática em sala</div><h2>Exercício final</h2></div><div class="n">39</div></div>
+  <div class="c" style="background:#f5fbfa;border:2px solid #bddfd9">
+    <p>Uma biblioteca mantém dados sobre <b>livros</b>, <b>autores</b>, <b>exemplares</b>, <b>leitores</b> e <b>empréstimos</b>. Um livro pode ter vários autores e um autor pode escrever vários livros. Cada livro possui vários exemplares físicos. Um leitor pode realizar vários empréstimos; cada empréstimo registra data de retirada, data prevista de devolução e data real de devolução.</p>
+  </div>
+  <div class="g3">
+    <div class="c"><h3>1. Identifique</h3><ul><li>entidades regulares;</li><li>atributos;</li><li>chaves primárias.</li></ul></div>
+    <div class="c"><h3>2. Classifique</h3><ul><li>relacionamentos 1:N;</li><li>relacionamentos N:M;</li><li>atributos de relacionamento.</li></ul></div>
+    <div class="c"><h3>3. Mapeie</h3><ul><li>crie as relações;</li><li>marque PK e FK;</li><li>explique a integridade referencial.</li></ul></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s hero">
+  <div class="k">Fechamento</div>
+  <h1>Do DER às tabelas, sem perder a semântica.</h1>
+  <p class="lead">O mapeamento relacional não é só trocar desenho por tabela. É preservar identidade, cardinalidade, participação, atributos e restrições do minimundo.</p>
+  <div class="steps"><span>Entender</span><span>Mapear</span><span>Validar chaves</span><span>Garantir referências</span></div>
+  <div class="bar"></div>
+</section>
+
+<div class="controls"><button id="p" title="Anterior">←</button><span id="ct"></span><button id="n" title="Próximo">→</button><button id="f" title="Tela cheia">⛶</button></div>
+<script>
+const S=[...document.querySelectorAll('.s')];let i=0;
+function sh(x){
+  i=Math.max(0,Math.min(S.length-1,x));
+  S.forEach((s,k)=>s.classList.toggle('on',k===i));
+  document.querySelector('#ct').textContent=`${i+1} / ${S.length}`;
+  document.querySelectorAll('.bar').forEach(b=>b.style.width=((i+1)/S.length*100)+'%');
+}
+document.getElementById('p').addEventListener('click',()=>sh(i-1));
+document.getElementById('n').addEventListener('click',()=>sh(i+1));
+document.getElementById('f').addEventListener('click',()=>document.documentElement.requestFullscreen?.());
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();sh(i+1)}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();sh(i-1)}
+  if(e.key==='Home')sh(0);
+  if(e.key==='End')sh(S.length-1);
+  if(e.key.toLowerCase()==='f')document.documentElement.requestFullscreen?.();
+});
+sh(0);
+</script>
+</body>
+</html>

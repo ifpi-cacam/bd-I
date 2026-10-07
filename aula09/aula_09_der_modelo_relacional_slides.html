@@ -1,0 +1,339 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BD I - Atividade DER e Modelo Relacional</title>
+<style>
+:root{
+  --bg:#f5f7f8;--panel:#fff;--ink:#17272b;--mut:#617177;--line:#dfe6e7;
+  --t:#0f766e;--t2:#115e59;--soft:#e9f5f3;--soft2:#f3f8f7;
+  --gold:#a16207;--goldbg:#fff7e7;--red:#a43f3f;--redbg:#fff1f1;
+  --blue:#25637a;--bluebg:#eef7fa;--violet:#6d5a8c;--violetbg:#f4f1f8;
+}
+*{box-sizing:border-box}
+html,body{margin:0;font-family:Inter,Segoe UI,sans-serif;background:var(--bg);color:var(--ink)}
+body{overflow:hidden}
+a{color:var(--t2);font-weight:900;text-decoration-thickness:2px;text-underline-offset:4px}
+.s{position:absolute;inset:0;display:none;overflow:auto;padding:5vh 7vw 76px;background:radial-gradient(circle at 94% 5%,#e8f5f2,transparent 25%),linear-gradient(#fff,#f8faf9)}
+.s.on{display:flex;flex-direction:column}
+.hero{justify-content:center}
+h1,h2{font-family:Georgia,serif;line-height:1.05;margin:.15em 0}
+h1{font-size:clamp(44px,6vw,82px);max-width:1120px}
+h2{font-size:clamp(32px,4vw,56px)}
+h3{margin:.2em 0 .55em;font-size:clamp(18px,1.7vw,25px)}
+p{font-size:clamp(16px,1.4vw,20px);line-height:1.55;color:#34474d}
+ul{margin:.4em 0 0;padding-left:1.15em}
+li{margin:.38em 0;color:#34474d}
+.lead{font-size:clamp(20px,2vw,28px);max-width:1100px}
+.k{font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--t);font-weight:800}
+.top{display:flex;justify-content:space-between;gap:20px}
+.n{font-size:13px;font-weight:800;color:#9aa6aa}
+.g2,.g3,.g4{display:grid;gap:18px;margin-top:22px}
+.g2{grid-template-columns:repeat(2,1fr)}
+.g3{grid-template-columns:repeat(3,1fr)}
+.g4{grid-template-columns:repeat(4,1fr)}
+.c,.mini{background:#fff;border:1px solid var(--line);border-radius:8px;padding:19px;box-shadow:0 7px 22px #17333a0d}
+.c p,.c li,.mini p{font-size:16px}
+.mini{padding:14px}
+.tag{display:inline-block;padding:5px 9px;border-radius:99px;background:var(--soft);color:#115e59;font-size:11px;font-weight:800;text-transform:uppercase}
+.tag.gold{background:var(--goldbg);color:var(--gold)}
+.tag.red{background:var(--redbg);color:var(--red)}
+.tag.blue{background:var(--bluebg);color:var(--blue)}
+.tag.violet{background:var(--violetbg);color:var(--violet)}
+.call{margin-top:20px;border-left:5px solid var(--t);background:var(--soft);padding:16px 20px;border-radius:0 8px 8px 0}
+.warn{border-left-color:var(--gold);background:var(--goldbg)}
+.danger{border-left-color:var(--red);background:var(--redbg)}
+.steps{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:24px 0}
+.steps span{background:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:8px;font-weight:700}
+.mono{white-space:pre-wrap;background:#172a2e;color:#f2f6f5;padding:17px;border-radius:8px;font-family:Consolas,monospace;line-height:1.65;font-size:clamp(14px,1.25vw,17px)}
+.note{margin-top:auto;padding-top:14px;font-size:13px;color:#78878c}
+.q{font-family:Georgia,serif;font-size:clamp(25px,3vw,40px);font-weight:700}
+.tablewrap{overflow:auto;border:1px solid var(--line);border-radius:8px;background:#fff;margin-top:20px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:15px}
+th,td{border:1px solid #dfe6e7;padding:10px 12px;text-align:left;vertical-align:top}
+th{background:#eef6f4;color:#18383c;font-weight:900}
+td{background:#fff;color:#34474d}
+.pk{background:#fff7e7!important;color:#7a4a05;font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.fk{background:#eef7fa!important;color:#20596d;font-weight:900}
+.both{background:linear-gradient(90deg,#fff7e7 0 50%,#eef7fa 50% 100%)!important;color:#18383c;font-weight:900;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+.legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.pill{border:1px solid var(--line);border-radius:99px;padding:6px 10px;background:#fff;font-size:13px;color:#41545a}
+.pill.pk{background:#fff7e7!important}
+.pill.fk{background:#eef7fa!important;text-decoration:none}
+.activity-link{display:inline-flex;align-items:center;gap:10px;background:#fff;border:2px solid #bddfd9;border-radius:8px;padding:16px 18px;margin-top:18px;margin-right:10px;box-shadow:0 7px 22px #17333a0d;font-size:clamp(17px,1.45vw,22px)}
+.activity-link::before{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:8px;font-size:13px;font-weight:900}
+.activity-link.pdf::before{content:"PDF";background:var(--redbg);color:var(--red)}
+.activity-link.web::before{content:"WEB";background:var(--bluebg);color:var(--blue)}
+.diagram{background:#fbfcfc;border:1px solid var(--line);border-radius:8px;padding:18px;margin-top:20px}
+.diagram svg{width:100%;max-height:46vh}
+.e{fill:#fff;stroke:#173f44;stroke-width:2}
+.r{fill:#e8f4f2;stroke:#0f766e;stroke-width:2}
+.a{fill:#fff;stroke:#718187;stroke-width:1.7}
+svg text{font-family:Inter,Arial;fill:#21363a}
+.lab{font-weight:800;font-size:17px}
+.sm{font-size:13px}
+.xs{font-size:11px}
+.tight{padding:3vh 7vw 60px}
+.tight h2{font-size:clamp(28px,3.5vw,48px)}
+.tight .lead{font-size:clamp(17px,1.45vw,22px);line-height:1.35}
+.tight .g2,.tight .g3{gap:12px;margin-top:14px}
+.tight .c{padding:14px}
+.tight h3{font-size:19px}
+.controls{position:fixed;z-index:5;right:20px;bottom:16px;background:#ffffffed;border:1px solid var(--line);border-radius:99px;padding:7px;box-shadow:0 10px 30px #17333a20}
+.controls button{border:0;background:#edf3f2;width:36px;height:36px;border-radius:50%;font-size:17px;cursor:pointer}
+.controls button:hover{background:#dcebe8}
+.controls span{display:inline-block;width:62px;text-align:center;font-size:12px;font-weight:800;color:#65757a}
+.bar{position:absolute;bottom:0;left:0;height:5px;background:var(--t)}
+@media(max-width:900px){
+  body{overflow:auto}
+  .s{position:relative;min-height:100vh}
+  .g2,.g3,.g4{grid-template-columns:1fr}
+  h1{font-size:42px}
+}
+@media print{
+  body{overflow:visible}
+  .controls{display:none}
+  .s{display:flex!important;position:relative;min-height:100vh;page-break-after:always}
+  .bar{display:none}
+}
+</style>
+</head>
+<body>
+
+<section class="s hero on">
+  <div class="k">Banco de Dados I · ADS</div>
+  <h1>Atividade: DER e Modelo Relacional</h1>
+  <p class="lead">A partir do enunciado da atividade, construa o Diagrama Entidade-Relacionamento e depois transforme o DER em esquema relacional usando as regras da aula anterior.</p>
+  <div class="steps"><span>Ler o minimundo</span><span>Construir o DER</span><span>Aplicar regras</span><span>Escrever relações</span><span>Validar chaves</span></div>
+  <p class="note">Aula 09 - 07/10/2026</p>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Arquivo da atividade</div><h2>Enunciado base</h2></div><div class="n">00</div></div>
+  <p class="lead">Use o PDF abaixo como enunciado da atividade. O HTML serve como roteiro de execução e padronização da entrega.</p>
+  <a class="activity-link pdf" href="ATIVIDADE_BANCO_DE_DADOS_30-09-2026.pdf" target="_blank" rel="noopener">Abrir ATIVIDADE_BANCO_DE_DADOS_30-09-2026.pdf</a>
+  <a class="activity-link web" href="guia_drawdb_tabelas_online.html" target="_blank" rel="noopener">Abrir guia rápido do drawDB</a>
+  <div class="g3">
+    <div class="c"><span class="tag">1</span><h3>Entrada</h3><p>Texto do minimundo descrito na atividade.</p></div>
+    <div class="c"><span class="tag">2</span><h3>Processo</h3><p>Modelagem conceitual no DER e conversão para o modelo relacional.</p></div>
+    <div class="c"><span class="tag">3</span><h3>Saída</h3><p>DER completo, tabelas criadas no drawDB e lista de relações no padrão definido nesta aula.</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Objetivo</div><h2>O que deve ser entregue?</h2></div><div class="n">01</div></div>
+  <div class="g2">
+    <div class="c"><span class="tag blue">Parte 1</span><h3>DER</h3><p>Construa o Diagrama Entidade-Relacionamento identificando entidades, atributos, chaves, relacionamentos e cardinalidades.</p></div>
+    <div class="c"><span class="tag gold">Parte 2</span><h3>Modelo relacional</h3><p>Converta o DER para tabelas, explicitando chaves primárias, chaves estrangeiras e atributos de cada relação. Use o drawDB para desenhar as tabelas online.</p></div>
+  </div>
+  <div class="call"><b>Regra da entrega:</b> o modelo relacional deve ser escrito em forma textual, no padrão <b>NomeTabela = (campos, etc, etc...)</b>.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Ferramenta online</div><h2>Usando o drawDB</h2></div><div class="n">02</div></div>
+  <p class="lead">Depois de entender o DER, use o drawDB para montar o esquema de tabelas: campos, tipos, PKs e FKs.</p>
+  <a class="activity-link web" href="https://www.drawdb.app/editor" target="_blank" rel="noopener">Abrir editor do drawDB</a>
+  <div class="g3">
+    <div class="c"><span class="tag">1</span><h3>Escolha o banco</h3><p>Para esta atividade, pode usar <b>Generic</b> ou o banco indicado pelo professor.</p></div>
+    <div class="c"><span class="tag">2</span><h3>Crie as tabelas</h3><p>Adicione uma tabela para cada relação do modelo relacional e cadastre seus campos.</p></div>
+    <div class="c"><span class="tag">3</span><h3>Ligue as FKs</h3><p>Crie os relacionamentos entre campos FK e campos PK correspondentes.</p></div>
+  </div>
+  <div class="call warn"><b>Atenção:</b> o drawDB ajuda a desenhar o esquema relacional. A decisão sobre entidades, cardinalidades e regras de mapeamento continua sendo parte da análise do aluno.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Roteiro</div><h2>Como começar pelo DER</h2></div><div class="n">03</div></div>
+  <div class="g3">
+    <div class="c"><span class="tag">1</span><h3>Leia o minimundo</h3><p>Marque os substantivos relevantes, regras de negócio e informações que precisam ser armazenadas.</p></div>
+    <div class="c"><span class="tag">2</span><h3>Separe entidades</h3><p>Entidades são objetos importantes do domínio: pessoa, produto, setor, matrícula, empréstimo, pedido, consulta.</p></div>
+    <div class="c"><span class="tag">3</span><h3>Liste atributos</h3><p>Associe cada dado à entidade ou relacionamento correto. Evite atributo solto sem dono.</p></div>
+    <div class="c"><span class="tag">4</span><h3>Defina chaves</h3><p>Escolha atributos capazes de identificar unicamente cada ocorrência da entidade.</p></div>
+    <div class="c"><span class="tag">5</span><h3>Modele relacionamentos</h3><p>Indique como as entidades se associam e se o relacionamento possui atributos próprios.</p></div>
+    <div class="c"><span class="tag">6</span><h3>Informe cardinalidades</h3><p>Registre 1:1, 1:N ou N:M conforme a regra do enunciado.</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">DER</div><h2>Itens que não podem faltar</h2></div><div class="n">04</div></div>
+  <div class="diagram">
+    <svg viewBox="0 0 980 330" role="img" aria-label="Modelo visual simplificado de um DER">
+      <rect class="e" x="70" y="110" width="210" height="100" rx="8"/>
+      <text class="lab" x="175" y="145" text-anchor="middle">ENTIDADE A</text>
+      <ellipse class="a" cx="105" cy="55" rx="70" ry="25"/>
+      <text class="sm" x="105" y="60" text-anchor="middle">id_a</text>
+      <ellipse class="a" cx="245" cy="55" rx="70" ry="25"/>
+      <text class="sm" x="245" y="60" text-anchor="middle">atributo</text>
+      <path d="M120 80L145 110M235 80L215 110" stroke="#718187"/>
+      <polygon class="r" points="465,95 575,160 465,225 355,160"/>
+      <text class="lab" x="465" y="165" text-anchor="middle">RELACIONA</text>
+      <rect class="e" x="650" y="110" width="210" height="100" rx="8"/>
+      <text class="lab" x="755" y="145" text-anchor="middle">ENTIDADE B</text>
+      <ellipse class="a" cx="720" cy="270" rx="70" ry="25"/>
+      <text class="sm" x="720" y="275" text-anchor="middle">id_b</text>
+      <ellipse class="a" cx="860" cy="270" rx="70" ry="25"/>
+      <text class="sm" x="860" y="275" text-anchor="middle">atributo</text>
+      <path d="M740 246L740 210M845 246L815 210M280 160H355M575 160H650" stroke="#718187"/>
+      <text class="xs" x="318" y="146" text-anchor="middle">1</text>
+      <text class="xs" x="615" y="146" text-anchor="middle">N</text>
+    </svg>
+  </div>
+  <div class="legend"><span class="pill">entidades</span><span class="pill">atributos</span><span class="pill">relacionamentos</span><span class="pill">cardinalidades</span></div>
+  <div class="call"><b>Conferência:</b> todo relacionamento deve ter cardinalidade, e toda entidade deve ter uma chave ou uma justificativa quando for entidade fraca.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Regras da aula anterior</div><h2>Conversão ER -> Relacional</h2></div><div class="n">05</div></div>
+  <div class="g3">
+    <div class="c"><h3>Entidade regular</h3><p>Gera uma tabela com seus atributos simples e sua chave primária.</p></div>
+    <div class="c"><h3>Entidade fraca</h3><p>Gera tabela com sua chave parcial mais a chave da entidade forte, formando PK composta.</p></div>
+    <div class="c"><h3>Atributo composto</h3><p>Não vira uma coluna única. Use seus componentes úteis.</p></div>
+    <div class="c"><h3>Atributo multivalorado</h3><p>Gera nova tabela com a PK da entidade de origem e o valor repetível.</p></div>
+    <div class="c"><h3>Relacionamento 1:N</h3><p>Coloque a FK no lado N, apontando para a PK do lado 1.</p></div>
+    <div class="c"><h3>Relacionamento N:M</h3><p>Gera tabela própria com FKs das entidades participantes e atributos do relacionamento.</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Mais regras</div><h2>Casos que exigem atenção</h2></div><div class="n">06</div></div>
+  <div class="g2">
+    <div class="c"><span class="tag blue">1:1</span><h3>Escolha onde ficará a FK</h3><p>Em geral, coloque a FK no lado com participação total ou no lado mais dependente da regra de negócio.</p></div>
+    <div class="c"><span class="tag blue">N-ário</span><h3>Relacionamento com 3 ou mais entidades</h3><p>Gera tabela própria contendo as FKs das entidades envolvidas e os atributos do relacionamento.</p></div>
+    <div class="c"><span class="tag violet">Especialização</span><h3>Supertipo e subtipos</h3><p>O supertipo gera tabela. Cada subtipo pode gerar tabela própria usando a PK do supertipo como PK e FK.</p></div>
+    <div class="c"><span class="tag gold">Atributo do relacionamento</span><h3>Não perca o atributo</h3><p>Data, quantidade, nota, horas ou status devem ficar na tabela que representa a associação.</p></div>
+  </div>
+  <div class="call warn"><b>A regra usada precisa ser coerente com a cardinalidade do DER.</b> Não crie tabela intermediária para todo relacionamento automaticamente.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Padrão obrigatório</div><h2>Como escrever o modelo relacional</h2></div><div class="n">07</div></div>
+  <p class="lead">Escreva uma relação por linha, usando exatamente o formato abaixo.</p>
+  <div class="mono">NomeTabela = (campo1, campo2, campo3, ...)</div>
+  <div class="g2">
+    <div class="c"><h3>Marcação de PK</h3><p>Indique a chave primária com <b>PK</b>. Se a chave for composta, marque todos os campos participantes.</p></div>
+    <div class="c"><h3>Marcação de FK</h3><p>Indique a chave estrangeira com <b>FK -> Tabela(campo)</b>, mostrando para onde ela aponta.</p></div>
+  </div>
+  <div class="call"><b>Exemplo de notação:</b> ALUNO = (<u>matricula PK</u>, nome, email, id_curso FK -> CURSO(id_curso))</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Exemplo de forma</div><h2>Modelo relacional esperado</h2></div><div class="n">08</div></div>
+  <p class="lead">O exemplo abaixo mostra a forma da resposta. Ele não resolve o enunciado da atividade.</p>
+  <div class="mono">CLIENTE = (id_cliente PK, nome, cpf, telefone)
+PEDIDO = (id_pedido PK, data_pedido, valor_total, id_cliente FK -> CLIENTE(id_cliente))
+PRODUTO = (id_produto PK, descricao, preco)
+ITEM_PEDIDO = (id_pedido PK/FK -> PEDIDO(id_pedido), id_produto PK/FK -> PRODUTO(id_produto), quantidade, valor_unitario)</div>
+  <div class="legend"><span class="pill pk">PK identifica a tupla</span><span class="pill fk">FK referencia outra tabela</span><span class="pill">PK/FK participa dos dois papéis</span></div>
+  <div class="call"><b>Leitura:</b> ITEM_PEDIDO representa um N:M entre PEDIDO e PRODUTO e guarda atributos próprios da associação.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Exemplo visual</div><h2>Mesma ideia em tabela</h2></div><div class="n">09</div></div>
+  <div class="tablewrap">
+    <table>
+      <thead>
+        <tr><th>Relação</th><th class="pk">Chave primária</th><th class="fk">Chaves estrangeiras</th><th>Atributos comuns</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>CLIENTE</td><td class="pk">id_cliente</td><td>-</td><td>nome, cpf, telefone</td></tr>
+        <tr><td>PEDIDO</td><td class="pk">id_pedido</td><td class="fk">id_cliente -> CLIENTE</td><td>data_pedido, valor_total</td></tr>
+        <tr><td>ITEM_PEDIDO</td><td class="both">id_pedido + id_produto</td><td class="fk">id_pedido -> PEDIDO<br>id_produto -> PRODUTO</td><td>quantidade, valor_unitario</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="call"><b>Na entrega textual, prefira a lista no padrão NomeTabela = (...).</b> A tabela é apenas uma forma auxiliar de conferência.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s tight">
+  <div class="top"><div><div class="k">Checklist</div><h2>Antes de entregar</h2></div><div class="n">10</div></div>
+  <div class="g3">
+    <div class="c"><span class="tag">DER</span><h3>Entidades completas</h3><p>Todas as entidades relevantes do enunciado aparecem no diagrama.</p></div>
+    <div class="c"><span class="tag">DER</span><h3>Cardinalidades</h3><p>Todo relacionamento tem cardinalidade compatível com a regra de negócio.</p></div>
+    <div class="c"><span class="tag">DER</span><h3>Atributos posicionados</h3><p>Os atributos estão ligados à entidade ou relacionamento correto.</p></div>
+    <div class="c"><span class="tag gold">Relacional</span><h3>PK marcada</h3><p>Cada tabela tem chave primária simples ou composta.</p></div>
+    <div class="c"><span class="tag gold">Relacional</span><h3>FK marcada</h3><p>Toda chave estrangeira mostra a tabela e o campo referenciado.</p></div>
+    <div class="c"><span class="tag gold">Relacional</span><h3>Formato padronizado</h3><p>Todas as relações seguem NomeTabela = (campo1, campo2, ...).</p></div>
+  </div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Erros comuns</div><h2>O que evitar nesta atividade</h2></div><div class="n">11</div></div>
+  <div class="g2">
+    <div class="c"><span class="tag red">Erro</span><h3>Confundir entidade com atributo</h3><p>Nem todo substantivo vira entidade. Verifique se ele tem dados próprios e existência relevante no sistema.</p></div>
+    <div class="c"><span class="tag red">Erro</span><h3>Esquecer relacionamento N:M</h3><p>N:M precisa virar uma tabela associativa no modelo relacional.</p></div>
+    <div class="c"><span class="tag red">Erro</span><h3>Guardar lista em campo</h3><p>Telefone1, telefone2 ou "vários autores" em uma única coluna indicam problema de modelagem.</p></div>
+    <div class="c"><span class="tag red">Erro</span><h3>FK sem referência</h3><p>Não basta escrever id_alguma_coisa. A entrega deve informar para qual tabela e chave a FK aponta.</p></div>
+  </div>
+  <div class="call danger"><b>Critério de consistência:</b> se uma FK aparece no modelo relacional, a tabela referenciada precisa existir e possuir a PK correspondente.</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s">
+  <div class="top"><div><div class="k">Entrega</div><h2>Formato final sugerido</h2></div><div class="n">12</div></div>
+  <div class="g2">
+    <div class="c">
+      <h3>1. DER</h3>
+      <ul>
+        <li>Imagem, desenho digital, foto legível ou diagrama exportado do drawDB.</li>
+        <li>Entidades, atributos, chaves e relacionamentos.</li>
+        <li>Cardinalidades indicadas no diagrama.</li>
+      </ul>
+    </div>
+    <div class="c">
+      <h3>2. Modelo relacional</h3>
+      <ul>
+        <li>Lista textual de relações e diagrama de tabelas criado no drawDB.</li>
+        <li>Uma relação por linha.</li>
+        <li>PK e FK explicitadas.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="mono">TABELA_1 = (campo_pk PK, campo_2, campo_3)
+TABELA_2 = (campo_pk PK, campo_fk FK -> TABELA_1(campo_pk), campo_4)
+TABELA_ASSOCIATIVA = (campo_a PK/FK -> TABELA_A(campo_a), campo_b PK/FK -> TABELA_B(campo_b), atributo_do_relacionamento)</div>
+  <div class="bar"></div>
+</section>
+
+<section class="s hero">
+  <div class="k">Fechamento</div>
+  <h1>Primeiro o significado. Depois as tabelas.</h1>
+  <p class="lead">O DER representa a compreensão do minimundo. O modelo relacional mostra como essa compreensão será organizada em relações, chaves e referências.</p>
+  <div class="steps"><span>DER claro</span><span>Regras aplicadas</span><span>PK definida</span><span>FK rastreável</span><span>Formato padronizado</span></div>
+  <div class="bar"></div>
+</section>
+
+<div class="controls"><button id="p" title="Anterior">←</button><span id="ct"></span><button id="n" title="Próximo">→</button><button id="f" title="Tela cheia">⛶</button></div>
+<script>
+const S=[...document.querySelectorAll('.s')];let i=0;
+function sh(x){
+  i=Math.max(0,Math.min(S.length-1,x));
+  S.forEach((s,k)=>s.classList.toggle('on',k===i));
+  document.querySelector('#ct').textContent=`${i+1} / ${S.length}`;
+  document.querySelectorAll('.bar').forEach(b=>b.style.width=((i+1)/S.length*100)+'%');
+}
+document.getElementById('p').addEventListener('click',()=>sh(i-1));
+document.getElementById('n').addEventListener('click',()=>sh(i+1));
+document.getElementById('f').addEventListener('click',()=>document.documentElement.requestFullscreen?.());
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();sh(i+1)}
+  if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();sh(i-1)}
+  if(e.key==='Home')sh(0);
+  if(e.key==='End')sh(S.length-1);
+  if(e.key.toLowerCase()==='f')document.documentElement.requestFullscreen?.();
+});
+sh(0);
+</script>
+</body>
+</html>
