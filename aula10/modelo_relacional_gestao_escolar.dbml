@@ -1,0 +1,133 @@
+Project gestao_escolar {
+  database_type: 'PostgreSQL'
+  Note: 'Modelo relacional da atividade de Gestão Escolar - Banco de Dados I'
+}
+
+Table serie {
+  id_serie int [pk]
+  nome varchar [not null]
+  turno varchar [not null, note: 'matutino, vespertino ou noturno']
+}
+
+Table aluno {
+  matricula varchar [pk]
+  nome varchar [not null]
+  data_nascimento date [not null]
+  sexo varchar [not null]
+  rua varchar [not null]
+  numero varchar
+  complemento varchar
+  cep varchar
+  bairro varchar [not null]
+  cidade varchar [not null]
+  id_serie int [not null]
+  data_ingresso_serie date [not null, note: 'Atributo do relacionamento Aluno-Série']
+
+  Note: 'Idade atual é atributo derivado de data_nascimento e não deve ser armazenada.'
+}
+
+Table aluno_telefone {
+  matricula varchar [not null]
+  telefone varchar [not null]
+
+  indexes {
+    (matricula, telefone) [pk]
+  }
+}
+
+Table disciplina {
+  codigo_disciplina varchar [pk]
+  descricao varchar [not null]
+}
+
+Table aluno_disciplina {
+  matricula varchar [not null]
+  codigo_disciplina varchar [not null]
+  nota_final decimal
+  percentual_frequencia decimal
+
+  indexes {
+    (matricula, codigo_disciplina) [pk]
+  }
+}
+
+Table serie_disciplina {
+  id_serie int [not null]
+  codigo_disciplina varchar [not null]
+
+  indexes {
+    (id_serie, codigo_disciplina) [pk]
+  }
+}
+
+Table sala {
+  codigo_sala varchar [pk]
+  nome varchar [not null]
+  localizacao varchar [not null]
+}
+
+Table utilizacao_sala {
+  id_serie int [not null]
+  codigo_sala varchar [not null]
+  horario varchar [not null]
+
+  indexes {
+    (id_serie, codigo_sala, horario) [pk]
+    (codigo_sala, horario) [unique]
+  }
+}
+
+Table responsavel {
+  cpf_responsavel varchar [pk]
+  nome varchar [not null]
+  telefone varchar [not null]
+}
+
+Table aluno_responsavel {
+  matricula varchar [not null]
+  cpf_responsavel varchar [not null]
+  grau_parentesco varchar [not null]
+
+  indexes {
+    (matricula, cpf_responsavel) [pk]
+  }
+}
+
+Table avaliacao {
+  codigo_disciplina varchar [not null]
+  numero_avaliacao int [not null]
+  descricao varchar [not null]
+  data_aplicacao date [not null]
+  valor_maximo decimal [not null]
+
+  indexes {
+    (codigo_disciplina, numero_avaliacao) [pk]
+  }
+
+  Note: 'Entidade fraca: numero_avaliacao é chave parcial dentro de disciplina.'
+}
+
+Table disciplina_pre_requisito {
+  codigo_disciplina varchar [not null]
+  codigo_pre_requisito varchar [not null]
+
+  indexes {
+    (codigo_disciplina, codigo_pre_requisito) [pk]
+  }
+
+  Note: 'Relacionamento recursivo N:M entre disciplinas.'
+}
+
+Ref: aluno.id_serie > serie.id_serie
+Ref: aluno_telefone.matricula > aluno.matricula
+Ref: aluno_disciplina.matricula > aluno.matricula
+Ref: aluno_disciplina.codigo_disciplina > disciplina.codigo_disciplina
+Ref: serie_disciplina.id_serie > serie.id_serie
+Ref: serie_disciplina.codigo_disciplina > disciplina.codigo_disciplina
+Ref: utilizacao_sala.id_serie > serie.id_serie
+Ref: utilizacao_sala.codigo_sala > sala.codigo_sala
+Ref: aluno_responsavel.matricula > aluno.matricula
+Ref: aluno_responsavel.cpf_responsavel > responsavel.cpf_responsavel
+Ref: avaliacao.codigo_disciplina > disciplina.codigo_disciplina
+Ref: disciplina_pre_requisito.codigo_disciplina > disciplina.codigo_disciplina
+Ref: disciplina_pre_requisito.codigo_pre_requisito > disciplina.codigo_disciplina
