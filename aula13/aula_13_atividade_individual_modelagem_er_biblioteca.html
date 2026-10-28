@@ -6,24 +6,27 @@
   <title>Atividade de Modelagem ER - Sistema de Biblioteca</title>
 </head>
 <body>
+  <p>Banco de Dados I<br>
+  Curso Superior em Análise e Desenvolvimento de Sistemas<br>
+  Módulo II<br>
+  Professor: Nairon Viana</p>
+
   <h1>Introdução e Conceitos de Banco de Dados</h1>
   <h2>Atividade de Modelagem ER</h2>
   <p>28/03/2018</p>
 
-  <h3>Atividade Individual - Modelagem ER</h3>
+  <h3>Atividade Individual – Modelagem ER</h3>
   <h4>Exercício 01: Sistema de uma Biblioteca</h4>
 
-  <p>Em uma biblioteca de uma universidade faz-se necessário armazenar as informações de estudantes, livros e processos realizados como empréstimos, reservas e encomendas de novos títulos. Na biblioteca existem uma ou mais cópias de diversos livros. Cada livro é organizado em uma área ou disciplina relacionada. Um livro faz parte de somente uma área de interesse, por exemplo, são agrupados livros de matemática, filosofia, sociologia, etc. Cada área de interesse ou disciplina armazena apenas o seu nome e pode estar vinculada a um ou mais cursos dentro da mesma universidade. Em cada curso são armazenadas informações como nome, duração (em anos), carga horária e data de implantação.</p>
+  <p>Em uma biblioteca de uma universidade faz-se necessário armazenar as informações de estudantes, livros e processos realizados como empréstimos, reservas e encomendas de novos títulos. Na biblioteca existem uma ou mais cópias de diversos livros. Cada livro é organizado em uma área ou disciplina relacionada. Um livro faz parte de somente uma área de interesse, por exemplo, são agrupados livros de matemática, filosofia, sociologia, etc. Cada área de interesse ou disciplina armazena apenas o seu nome e pode estar vinculada à um ou mais cursos dentro da mesma universidade. Em cada curso são armazenadas informações como nome, duração (em anos), carga horária e data de implantação.</p>
 
-  <p>Existem quatro tipos de usuários na biblioteca. Todos os usuários podem fazer reservas ou empréstimos dos livros. Além dessas duas operações, o sistema deve armazenar as consultas realizadas, de maneira a ser possível saber qual o usuário que realizou uma consulta de um determinado título em um período. Mais ainda, o sistema deve saber quais os livros não estão sob empréstimo, mas sendo utilizados dentro das dependências da biblioteca (livros chamados cativos, que não podem sair da biblioteca mas podem ser acessados pelos usuários). Tais usuários são: gerente, responsável por cadastrar os operadores do sistema; operador, responsável por fazer reservas no sistema ou empréstimos; estudantes ou professores.</p>
+  <p>Existem quatro tipos de usuários na biblioteca. Todos os usuários podem fazer reservas ou empréstimos dos livros. Além dessas duas operações, o sistema deve armazenar as consultas realizadas, de maneira a ser possível saber qual o usuário que realizou uma consulta de um determinado título em um período. Mais ainda, o sistema deve saber quais os livros não estão sob empréstimo, mas sendo utilizados dentro das dependências da biblioteca (livros chamados cativos, que não podem sair da biblioteca mas podem ser acessados pelos usuários). Tais usuários são: gerente, responsável por cadastrar os operadores do sistema; operador, responsável por fazer reservas no sistema ou empréstimos; estudantes ou professores. Um usuário genérico possui o nome, endereço, data de nascimento, idade, sexo e matrícula; um usuário gerente possui, além das informações anteriores, a data em que entrou na gerência e a data em que saiu; um usuário operador possui a data em que entrou no sistema e o tipo de operador (normal, administrador ou supervisor); um usuário estudante possui ainda o curso associado, a data em que entrou na universidade e a quantidade de períodos cursados; o usuário professor possui o departamento ao qual está vinculado, a titulação e a quantidade de anos que leciona.</p>
 
-  <p>Um usuário genérico possui o nome, endereço, data de nascimento, idade, sexo e matrícula. Um usuário gerente possui, além das informações anteriores, a data em que entrou na gerência e a data em que saiu. Um usuário operador possui a data em que entrou no sistema e o tipo de operador (normal, administrador ou supervisor). Um usuário estudante possui ainda o curso associado, a data em que entrou na universidade e a quantidade de períodos cursados. O usuário professor possui o departamento ao qual está vinculado, a titulação e a quantidade de anos que leciona.</p>
+  <p>Um livro do sistema possui as seguintes informações: título, autor, editora, ano de publicação e quantidade de itens em estoque, além do código do livro (ISBN). Associado a um livro está um ou mais exemplares. Cada exemplar possui o seu código próprio, de modo que deve ser possível saber qual o exato exemplar que está sendo alugado/reservado para um usuário. Além disso cada exemplar possui um indicador se é cativo ou não, ou seja, livros cativos não podem ser emprestados, apenas utilizados dentro das dependências da biblioteca.</p>
 
-  <p>Um livro do sistema possui as seguintes informações: título, autor, editora, ano de publicação e quantidade de itens em estoque, além do código do livro (ISBN). Associado a um livro está um ou mais exemplares. Cada exemplar possui o seu código próprio, de modo que deve ser possível saber qual o exato exemplar que está sendo alugado/reservado para um usuário. Além disso, cada exemplar possui um indicador se é cativo ou não, ou seja, livros cativos não podem ser emprestados, apenas utilizados dentro das dependências da biblioteca.</p>
+  <p>O processo de empréstimo/reserva é simples. O usuário chega ao operador e solicita o empréstimo do título desejado. O operador verifica se o título está disponível e caso esteja realiza o empréstimo/reserva. Na reserva/empréstimo deve ser possível saber qual o título reservado/emprestado e para qual usuário foi efetuada a operação e qual o funcionário que realizou. É possível também que o próprio usuário, professor ou aluno realize o empréstimo/reserva de títulos.</p>
 
-  <p>O processo de empréstimo/reserva é simples. O usuário chega ao operador e solicita o empréstimo do título desejado. O operador verifica se o título está disponível e, caso esteja, realiza o empréstimo/reserva. Na reserva/empréstimo deve ser possível saber qual o título reservado/emprestado, para qual usuário foi efetuada a operação e qual o funcionário que a realizou. É possível também que o próprio usuário, professor ou aluno, realize o empréstimo/reserva de títulos.</p>
-
-  <p>Títulos podem ser encomendados para o sistema. Para isso, o sistema armazena uma lista de fornecedores. O gerente é o responsável pelo cadastro do fornecedor. O sistema deve armazenar todas as encomendas de livros realizadas, a data de realização, a quantidade realizada, para qual fornecedor foi feita a encomenda e qual o gerente que realizou a encomenda.</p>
+  <p>Títulos podem ser encomendados para o sistema. Para isso o sistema armazena uma lista de fornecedores. O gerente é o responsável pelo cadastro do fornecedor. O sistema deve armazenar todas as encomendas de livros realizadas, a data de realização, a quantidade realizada e para qual fornecedor foi feita a encomenda, e qual o gerente que realizou a encomenda.</p>
 
   <h3>Atividade Individual</h3>
   <ol>
@@ -32,14 +35,7 @@
     <li>Utilize a ferramenta DBDesigner ou VisualParadigm para fazer o desenho, no computador, do modelo ER da questão 2.</li>
   </ol>
 
-  <p>Valor: 1,0 ponto.</p>
+  <p>Valor: 1,0 pt</p>
   <p>Entrega: até o final da aula.</p>
-
-  <hr>
-  <p>Ministério da Educação<br>
-  Instituto Federal de Educação, Ciência e Tecnologia do Piauí (Campus Campo Maior)<br>
-  Curso Técnico em Informática Concomitante/Subsequente<br>
-  Disciplina: Projeto de Banco de Dados - Módulo III<br>
-  Professor: Nairon Viana</p>
 </body>
 </html>
