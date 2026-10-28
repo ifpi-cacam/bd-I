@@ -1,116 +1,45 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>BD I - Aula 13: Atividade Individual de Modelagem ER - Biblioteca</title>
-<style>
-:root{--bg:#f5f7f8;--ink:#17272b;--mut:#617177;--line:#dfe6e7;--teal:#0f766e;--teal2:#115e59;--soft:#e9f5f3;--gold:#a16207;--goldbg:#fff7e7;--red:#a43f3f;--redbg:#fff1f1;--blue:#25637a;--bluebg:#eef7fa;--violet:#6d5a8c;--violetbg:#f4f1f8}
-*{box-sizing:border-box}html,body{margin:0;font-family:Inter,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink)}body{overflow:hidden}a{color:var(--teal2);font-weight:900;text-decoration-thickness:2px;text-underline-offset:4px}.s{position:absolute;inset:0;display:none;overflow:auto;padding:5vh 7vw 76px;background:radial-gradient(circle at 94% 5%,#e8f5f2,transparent 25%),linear-gradient(#fff,#f8faf9)}.s.on{display:flex;flex-direction:column}.hero{justify-content:center}h1,h2{font-family:Georgia,serif;line-height:1.05;margin:.15em 0}h1{font-size:clamp(42px,6vw,80px);max-width:1120px}h2{font-size:clamp(30px,4vw,54px)}h3{margin:.2em 0 .55em;font-size:clamp(18px,1.7vw,25px)}p{font-size:clamp(16px,1.4vw,20px);line-height:1.55;color:#34474d}ul{margin:.4em 0 0;padding-left:1.15em}li{margin:.38em 0;color:#34474d}.lead{font-size:clamp(20px,2vw,28px);max-width:1120px}.k{font-size:13px;letter-spacing:.15em;text-transform:uppercase;color:var(--teal);font-weight:800}.top{display:flex;justify-content:space-between;gap:20px}.n{font-size:13px;font-weight:800;color:#9aa6aa}.g2,.g3,.g4{display:grid;gap:18px;margin-top:22px}.g2{grid-template-columns:repeat(2,1fr)}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}.c,.mini{background:#fff;border:1px solid var(--line);border-radius:8px;padding:19px;box-shadow:0 7px 22px #17333a0d}.c p,.c li,.mini p{font-size:16px}.tag{display:inline-block;padding:5px 9px;border-radius:99px;background:var(--soft);color:#115e59;font-size:11px;font-weight:800;text-transform:uppercase}.tag.gold{background:var(--goldbg);color:var(--gold)}.tag.red{background:var(--redbg);color:var(--red)}.tag.blue{background:var(--bluebg);color:var(--blue)}.tag.violet{background:var(--violetbg);color:var(--violet)}.call{margin-top:20px;border-left:5px solid var(--teal);background:var(--soft);padding:16px 20px;border-radius:0 8px 8px 0}.warn{border-left-color:var(--gold);background:var(--goldbg)}.danger{border-left-color:var(--red);background:var(--redbg)}.steps{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin:24px 0}.steps span{background:#fff;border:1px solid var(--line);padding:10px 14px;border-radius:8px;font-weight:700}.note{margin-top:auto;padding-top:14px;font-size:13px;color:#78878c}.download{display:inline-flex;align-items:center;gap:10px;background:#fff;border:2px solid #bddfd9;border-radius:8px;padding:12px 16px;margin-top:10px;box-shadow:0 7px 22px #17333a0d;font-size:16px}.mono{white-space:pre-wrap;background:#172a2e;color:#f2f6f5;padding:17px;border-radius:8px;font-family:Consolas,monospace;line-height:1.65;font-size:clamp(14px,1.25vw,17px)}.controls{position:fixed;z-index:5;right:20px;bottom:16px;background:#ffffffed;border:1px solid var(--line);border-radius:99px;padding:7px;box-shadow:0 10px 30px #17333a20}.controls button{border:0;background:#edf3f2;width:36px;height:36px;border-radius:50%;font-size:17px;cursor:pointer}.controls button:hover{background:#dcebe8}.controls span{display:inline-block;width:62px;text-align:center;font-size:12px;font-weight:800;color:#65757a}.bar{position:absolute;bottom:0;left:0;height:5px;background:var(--teal)}
-@media(max-width:900px){body{overflow:auto}.s{position:relative;min-height:100vh}.g2,.g3,.g4{grid-template-columns:1fr}h1{font-size:42px}}
-@media print{body{overflow:visible}.controls{display:none}.s{display:flex!important;position:relative;min-height:100vh;page-break-after:always}.bar{display:none}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atividade de Modelagem ER - Sistema de Biblioteca</title>
 </head>
 <body>
-<section class="s on hero">
-  <div class="k">Aula 13 · Atividade individual</div>
-  <h1>Modele uma biblioteca universitária.</h1>
-  <p class="lead">Leia o minimundo, identifique as informações que precisam ser armazenadas e represente-as em um Diagrama Entidade-Relacionamento completo.</p>
-  <div class="steps"><span>Individual</span><span>Modelagem ER</span><span>Valor: 1,0 ponto</span></div><div class="bar"></div>
-</section>
+  <h1>Introdução e Conceitos de Banco de Dados</h1>
+  <h2>Atividade de Modelagem ER</h2>
+  <p>28/03/2018</p>
 
-<section class="s tight">
-  <div class="top"><div><div class="k">Minimundo</div><h2>O que a biblioteca precisa controlar</h2></div><div class="n">02</div></div>
-  <p class="lead">Uma biblioteca universitária mantém dados de livros, exemplares, usuários e cursos. Também registra empréstimos, reservas, consultas, uso local de exemplares cativos e encomendas de títulos.</p>
-  <div class="g3">
-    <div class="c"><span class="tag">Acervo</span><h3>Livros e exemplares</h3><p>O sistema identifica cada título e cada cópia física do acervo, inclusive as cópias de uso local.</p></div>
-    <div class="c"><span class="tag blue">Pessoas</span><h3>Usuários</h3><p>Gerentes, operadores, estudantes e professores usam os serviços da biblioteca com dados próprios e dados comuns.</p></div>
-    <div class="c"><span class="tag gold">Operações</span><h3>Circulação e compras</h3><p>Empréstimos, reservas, consultas e encomendas precisam ficar registrados com seus participantes e informações relevantes.</p></div>
-  </div><div class="bar"></div>
-</section>
+  <h3>Atividade Individual - Modelagem ER</h3>
+  <h4>Exercício 01: Sistema de uma Biblioteca</h4>
 
-<section class="s tight">
-  <div class="top"><div><div class="k">Organização do acervo</div><h2>Títulos, exemplares e áreas</h2></div><div class="n">03</div></div>
-  <div class="g2">
-    <div class="c"><span class="tag">Livro</span><h3>Dados do título</h3><p>O livro é identificado pelo ISBN. Registre título, autor, editora, ano de publicação e quantidade em estoque.</p></div>
-    <div class="c"><span class="tag blue">Exemplar</span><h3>Cópias individuais</h3><p>Cada exemplar tem código próprio e um indicador que informa se é cativo. É preciso distinguir a cópia envolvida em cada operação.</p></div>
-    <div class="c"><span class="tag violet">Área ou disciplina</span><h3>Classificação do livro</h3><p>Cada livro pertence a uma única área. Uma área guarda seu nome e pode estar vinculada a um ou mais cursos da universidade.</p></div>
-    <div class="c"><span class="tag violet">Curso</span><h3>Dados do curso</h3><p>Armazene nome, duração em anos, carga horária e data de implantação.</p></div>
-  </div><div class="call"><b>Pense nas cardinalidades:</b> quantos exemplares podem corresponder a um título? A quantas áreas um livro pode pertencer? E quantos cursos podem se relacionar com uma área?</div><div class="bar"></div>
-</section>
+  <p>Em uma biblioteca de uma universidade faz-se necessário armazenar as informações de estudantes, livros e processos realizados como empréstimos, reservas e encomendas de novos títulos. Na biblioteca existem uma ou mais cópias de diversos livros. Cada livro é organizado em uma área ou disciplina relacionada. Um livro faz parte de somente uma área de interesse, por exemplo, são agrupados livros de matemática, filosofia, sociologia, etc. Cada área de interesse ou disciplina armazena apenas o seu nome e pode estar vinculada a um ou mais cursos dentro da mesma universidade. Em cada curso são armazenadas informações como nome, duração (em anos), carga horária e data de implantação.</p>
 
-<section class="s tight">
-  <div class="top"><div><div class="k">Pessoas</div><h2>Usuários e especializações</h2></div><div class="n">04</div></div>
-  <div class="g2">
-    <div class="c"><span class="tag">Dados comuns</span><h3>Usuário</h3><p>Nome, endereço, data de nascimento, idade, sexo e matrícula são dados comuns aos quatro tipos de usuário.</p></div>
-    <div class="c"><span class="tag gold">Gerente</span><h3>Gestão da biblioteca</h3><p>Além dos dados comuns, registra data de entrada e data de saída da gerência. É responsável pelo cadastro de operadores e fornecedores e pelas encomendas.</p></div>
-    <div class="c"><span class="tag blue">Operador</span><h3>Operação do sistema</h3><p>Registra data de entrada no sistema e tipo de operador: normal, administrador ou supervisor.</p></div>
-    <div class="c"><span class="tag violet">Estudante e professor</span><h3>Dados acadêmicos</h3><p>Estudante: curso, data de entrada na universidade e períodos cursados. Professor: departamento, titulação e anos de docência.</p></div>
-  </div><div class="call warn"><b>Decisão de modelagem:</b> represente os dados compartilhados e os dados específicos de cada tipo sem duplicar atributos desnecessariamente. Verifique a especialização indicada pelo enunciado.</div><div class="bar"></div>
-</section>
+  <p>Existem quatro tipos de usuários na biblioteca. Todos os usuários podem fazer reservas ou empréstimos dos livros. Além dessas duas operações, o sistema deve armazenar as consultas realizadas, de maneira a ser possível saber qual o usuário que realizou uma consulta de um determinado título em um período. Mais ainda, o sistema deve saber quais os livros não estão sob empréstimo, mas sendo utilizados dentro das dependências da biblioteca (livros chamados cativos, que não podem sair da biblioteca mas podem ser acessados pelos usuários). Tais usuários são: gerente, responsável por cadastrar os operadores do sistema; operador, responsável por fazer reservas no sistema ou empréstimos; estudantes ou professores.</p>
 
-<section class="s tight">
-  <div class="top"><div><div class="k">Circulação</div><h2>Empréstimos e reservas</h2></div><div class="n">05</div></div>
-  <p class="lead">Todos os tipos de usuário podem realizar empréstimos e reservas. Cada operação deve identificar o título ou exemplar envolvido e o usuário atendido.</p>
-  <div class="g3">
-    <div class="c"><span class="tag">Usuário</span><h3>Solicita a operação</h3><p>Registre qual usuário fez o empréstimo ou a reserva.</p></div>
-    <div class="c"><span class="tag blue">Livro / exemplar</span><h3>Item do acervo</h3><p>O sistema precisa localizar o título e, quando necessário, a cópia física exata emprestada ou reservada.</p></div>
-    <div class="c"><span class="tag gold">Funcionário</span><h3>Atende a solicitação</h3><p>Quando um operador realiza a operação, registre qual funcionário a efetuou. O próprio estudante ou professor também pode realizá-la.</p></div>
-  </div><div class="call"><b>Não misture os conceitos:</b> empréstimo e reserva são operações que precisam ser identificáveis e relacionadas aos participantes descritos no enunciado.</div><div class="bar"></div>
-</section>
+  <p>Um usuário genérico possui o nome, endereço, data de nascimento, idade, sexo e matrícula. Um usuário gerente possui, além das informações anteriores, a data em que entrou na gerência e a data em que saiu. Um usuário operador possui a data em que entrou no sistema e o tipo de operador (normal, administrador ou supervisor). Um usuário estudante possui ainda o curso associado, a data em que entrou na universidade e a quantidade de períodos cursados. O usuário professor possui o departamento ao qual está vinculado, a titulação e a quantidade de anos que leciona.</p>
 
-<section class="s tight">
-  <div class="top"><div><div class="k">Outros usos do acervo</div><h2>Consultas e exemplares cativos</h2></div><div class="n">06</div></div>
-  <div class="g2">
-    <div class="c"><span class="tag blue">Consulta</span><h3>Pesquisa de título</h3><p>Armazene as consultas para saber qual usuário consultou determinado título e em que período.</p><p>Defina quais dados representam o período da consulta conforme o nível de detalhe adotado no modelo.</p></div>
-    <div class="c"><span class="tag gold">Uso local</span><h3>Exemplar cativo</h3><p>Um exemplar cativo não pode sair da biblioteca, mas pode ser utilizado dentro das dependências. Ele não deve ser tratado como um empréstimo externo comum.</p></div>
-  </div><div class="call warn"><b>Regra de negócio:</b> o indicador de exemplar cativo altera as operações permitidas para aquela cópia.</div><div class="bar"></div>
-</section>
+  <p>Um livro do sistema possui as seguintes informações: título, autor, editora, ano de publicação e quantidade de itens em estoque, além do código do livro (ISBN). Associado a um livro está um ou mais exemplares. Cada exemplar possui o seu código próprio, de modo que deve ser possível saber qual o exato exemplar que está sendo alugado/reservado para um usuário. Além disso, cada exemplar possui um indicador se é cativo ou não, ou seja, livros cativos não podem ser emprestados, apenas utilizados dentro das dependências da biblioteca.</p>
 
-<section class="s tight">
-  <div class="top"><div><div class="k">Aquisições</div><h2>Fornecedores e encomendas</h2></div><div class="n">07</div></div>
-  <div class="g3">
-    <div class="c"><span class="tag">Fornecedor</span><h3>Cadastro</h3><p>O sistema mantém uma lista de fornecedores, cadastrados pelo gerente.</p></div>
-    <div class="c"><span class="tag blue">Encomenda</span><h3>Registro da compra</h3><p>Armazene cada encomenda de livros, a data de realização e a quantidade encomendada.</p></div>
-    <div class="c"><span class="tag violet">Responsáveis</span><h3>Livro, fornecedor e gerente</h3><p>Identifique o título encomendado, o fornecedor escolhido e o gerente responsável pela encomenda.</p></div>
-  </div><div class="call"><b>Verifique:</b> uma encomenda pode conter mais de um título? O enunciado não detalha isso; registre sua hipótese de modelagem e mantenha-a consistente.</div><div class="bar"></div>
-</section>
+  <p>O processo de empréstimo/reserva é simples. O usuário chega ao operador e solicita o empréstimo do título desejado. O operador verifica se o título está disponível e, caso esteja, realiza o empréstimo/reserva. Na reserva/empréstimo deve ser possível saber qual o título reservado/emprestado, para qual usuário foi efetuada a operação e qual o funcionário que a realizou. É possível também que o próprio usuário, professor ou aluno, realize o empréstimo/reserva de títulos.</p>
 
-<section class="s">
-  <div class="top"><div><div class="k">Etapa 1</div><h2>Identifique os elementos do DER</h2></div><div class="n">08</div></div>
-  <div class="g3">
-    <div class="c"><span class="tag">Entidades</span><h3>Quais objetos existem?</h3><p>Liste os objetos que precisam ser armazenados, incluindo pessoas, acervo e operações.</p></div>
-    <div class="c"><span class="tag blue">Atributos</span><h3>Quais dados pertencem a cada um?</h3><p>Distribua os atributos do enunciado e identifique atributos específicos de cada tipo de usuário.</p></div>
-    <div class="c"><span class="tag gold">Identificadores</span><h3>Como distinguir cada ocorrência?</h3><p>Marque as chaves identificadoras. Considere os identificadores fornecidos, como matrícula, ISBN e códigos próprios.</p></div>
-    <div class="c"><span class="tag violet">Relacionamentos</span><h3>Como os elementos se conectam?</h3><p>Represente as ligações entre título e exemplar, área e curso, usuários e operações, e os responsáveis pelas encomendas.</p></div>
-    <div class="c"><span class="tag gold">Cardinalidades</span><h3>Quantas ocorrências participam?</h3><p>Use as regras do minimundo para definir cardinalidades e participação obrigatória ou opcional.</p></div>
-    <div class="c"><span class="tag red">Regras</span><h3>O que restringe as operações?</h3><p>Registre regras como a restrição de empréstimo de exemplares cativos.</p></div>
-  </div><div class="bar"></div>
-</section>
+  <p>Títulos podem ser encomendados para o sistema. Para isso, o sistema armazena uma lista de fornecedores. O gerente é o responsável pelo cadastro do fornecedor. O sistema deve armazenar todas as encomendas de livros realizadas, a data de realização, a quantidade realizada, para qual fornecedor foi feita a encomenda e qual o gerente que realizou a encomenda.</p>
 
-<section class="s tight">
-  <div class="top"><div><div class="k">Etapa 2</div><h2>Desenhe e revise o modelo</h2></div><div class="n">09</div></div>
-  <div class="g2">
-    <div class="c"><span class="tag">Ferramenta</span><h3>Produza o diagrama</h3><p>Use DBDesigner ou VisualParadigm para desenhar o modelo ER no computador.</p></div>
-    <div class="c"><span class="tag gold">Completude</span><h3>Cubra o enunciado inteiro</h3><p>Confira se livros, cópias, quatro tipos de usuários, operações, consultas, uso local, cursos, fornecedores e encomendas aparecem no modelo.</p></div>
-    <div class="c"><span class="tag blue">Coerência</span><h3>Valide as ligações</h3><p>Verifique se cada relacionamento tem cardinalidades compatíveis com as regras descritas.</p></div>
-    <div class="c"><span class="tag violet">Legibilidade</span><h3>Organize a entrega</h3><p>Deixe entidades, atributos, identificadores, relacionamentos e cardinalidades fáceis de ler.</p></div>
-  </div><div class="call danger"><b>Entrega individual:</b> um Diagrama Entidade-Relacionamento completo, contemplando todos os requisitos identificados no minimundo.</div><div class="bar"></div>
-</section>
+  <h3>Atividade Individual</h3>
+  <ol>
+    <li>Identifique as entidades, atributos e relacionamentos.</li>
+    <li>Elabore o Diagrama Entidade-Relacionamento completo, contemplando todos os requisitos identificados.</li>
+    <li>Utilize a ferramenta DBDesigner ou VisualParadigm para fazer o desenho, no computador, do modelo ER da questão 2.</li>
+  </ol>
 
-<section class="s hero">
-  <div class="k">Resumo da atividade</div><h1>Leia. Modele. Confira cada regra.</h1>
-  <p class="lead">Identifique entidades, atributos e relacionamentos; desenhe o DER completo na ferramenta indicada; revise se o diagrama representa todas as operações da biblioteca.</p>
-  <div class="steps"><span>Valor: 1,0 ponto</span><span>Prazo: até o final da aula</span><span>Trabalho individual</span></div>
-  <p class="note">Atividade de Modelagem ER — Sistema de Biblioteca</p><div class="bar"></div>
-</section>
+  <p>Valor: 1,0 ponto.</p>
+  <p>Entrega: até o final da aula.</p>
 
-<div class="controls"><button id="prev" title="Anterior" aria-label="Slide anterior">&larr;</button><span id="count" aria-live="polite"></span><button id="next" title="Próximo" aria-label="Próximo slide">&rarr;</button><button id="full" title="Tela cheia" aria-label="Tela cheia">&#x26F6;</button></div>
-<script>
-const slides=[...document.querySelectorAll('.s')];let current=0;
-function show(n){current=Math.max(0,Math.min(slides.length-1,n));slides.forEach((s,k)=>s.classList.toggle('on',k===current));document.querySelector('#count').textContent=`${current+1} / ${slides.length}`;document.querySelectorAll('.bar').forEach(b=>b.style.width=((current+1)/slides.length*100)+'%')}
-document.querySelector('#prev').addEventListener('click',()=>show(current-1));document.querySelector('#next').addEventListener('click',()=>show(current+1));document.querySelector('#full').addEventListener('click',()=>document.documentElement.requestFullscreen?.());
-addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(current+1)}if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(current-1)}if(e.key==='Home')show(0);if(e.key==='End')show(slides.length-1);if(e.key.toLowerCase()==='f')document.documentElement.requestFullscreen?.()});show(0);
-</script>
+  <hr>
+  <p>Ministério da Educação<br>
+  Instituto Federal de Educação, Ciência e Tecnologia do Piauí (Campus Campo Maior)<br>
+  Curso Técnico em Informática Concomitante/Subsequente<br>
+  Disciplina: Projeto de Banco de Dados - Módulo III<br>
+  Professor: Nairon Viana</p>
 </body>
 </html>
