@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Enunciado de estudo de caso para modelagem conceitual de um sistema de cursos.">
+  <title>Estudo de caso — Sistema de Cursos | Banco de Dados I</title>
+  <style>
+    :root{color-scheme:light;--ink:#172033;--muted:#56647a;--line:#dce4ef;--paper:#fff;--wash:#f2f5fa;--blue:#2851c7;--pale:#eaf0ff;--navy:#15264a;--gold:#b47a22}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--wash);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif}
+    .hero{background:radial-gradient(ellipse at 88% 10%,#334d82 0,transparent 34%),var(--navy);color:white;padding:clamp(34px,7vw,76px) 20px 52px}.wrap{width:min(960px,100% - 36px);margin:auto}.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:#c3d2ff}.hero h1{font-size:clamp(2.2rem,6vw,4rem);line-height:1.08;max-width:760px;margin:13px 0}.hero p{color:#d6e0f7;max-width:710px;margin:16px 0 0;font-size:1.08rem}.meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:25px}.meta span{border:1px solid #ffffff48;border-radius:999px;padding:5px 12px;color:#e6edff;font-size:.83rem}
+    main{padding:30px 0 58px}.paper{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 28px #1720330b;padding:clamp(22px,5vw,48px)}.section-label{color:var(--blue);font-weight:850;letter-spacing:.09em;text-transform:uppercase;font-size:.8rem}.paper h2{font-size:clamp(1.6rem,4vw,2.35rem);line-height:1.2;margin:7px 0 10px}.intro{color:var(--muted);font-size:1.02rem;margin:0 0 27px}.story{border-top:1px solid var(--line);padding-top:18px}.story p{margin:0 0 18px}.story strong{color:#183878}.callout{margin-top:27px;padding:17px 20px;background:#f7f9fd;border-left:4px solid var(--blue);border-radius:8px}.callout h3{margin:0 0 5px;font-size:1rem;color:#1c397d}.callout p{margin:0;color:#34415b}.footer{padding:19px 0 32px;color:#778399;font-size:.84rem;text-align:center}.footer strong{color:#56647a}
+    @media print{@page{size:A4;margin:18mm}body{background:white;font-size:11pt}.hero{padding:22px 0 24px;background:var(--navy)!important;print-color-adjust:exact;-webkit-print-color-adjust:exact}.wrap{width:100%}.paper{padding:0;border:0;box-shadow:none}main{padding:18px 0}.callout{break-inside:avoid}.footer{padding-bottom:0}}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="wrap">
+      <div class="eyebrow">Banco de Dados I · Atividade de modelagem</div>
+      <h1>Estudo de caso integrador<br>Sistema de Cursos</h1>
+      <p>Requisitos do domínio para elaborar um modelo conceitual de dados. Leia o minimundo com atenção e represente as informações e restrições descritas.</p>
+      <div class="meta"><span>MER / EER</span><span>Enunciado da atividade</span><span>18 de novembro de 2026</span></div>
+    </div>
+  </header>
+  <main class="wrap">
+    <article class="paper">
+      <div class="section-label">Parte I · Requisitos do domínio</div>
+      <h2>Minimundo — leia antes de desenhar</h2>
+      <p class="intro">O cenário a seguir descreve o funcionamento de uma instituição que oferece cursos e organiza pessoas, turmas, matrículas, avaliações e aulas.</p>
+      <div class="story">
+        <p>Uma instituição oferece <strong>cursos</strong>, e cada curso possui várias <strong>turmas</strong>. Toda turma pertence a exatamente um curso. Cada curso tem um <strong>professor coordenador</strong>; um professor coordena no máximo um curso, mas pode não coordenar nenhum.</p>
+        <p>O sistema cadastra <strong>pessoas</strong> com identificador, nome e <strong>endereço</strong> formado por rua, número e cidade. Uma pessoa pode informar vários <strong>telefones</strong>. Algumas pessoas são <strong>alunos</strong>, outras são <strong>professores</strong>, algumas exercem os dois papéis e outras não pertencem a nenhum desses tipos. Um aluno possui matrícula; um professor possui titulação.</p>
+        <p>Alunos podem se matricular em várias turmas, e cada turma pode receber vários alunos. Em uma turma são realizadas várias <strong>avaliações</strong>. Cada avaliação possui um número sequencial, único somente dentro da respectiva turma, além de descrição e peso.</p>
+        <p>A instituição dispõe de <strong>salas</strong>. Para cada <strong>aula agendada</strong>, registra-se simultaneamente qual professor ministra a aula, qual turma a recebe, em qual sala ela acontece e quando começa. A mesma combinação de professor, turma e sala pode ocorrer em datas e horários diferentes.</p>
+      </div>
+      <aside class="callout">
+        <h3>Escopo do enunciado</h3>
+        <p>Considere as regras e os limites expressos no texto. A representação deverá preservar a identidade das pessoas, os papéis que podem acumular e as associações entre os elementos do domínio.</p>
+      </aside>
+    </article>
+  </main>
+  <footer class="footer"><div class="wrap"><strong>Banco de Dados I</strong> · Material de aula · Estudo de caso: Sistema de Cursos</div></footer>
+</body>
+</html>
